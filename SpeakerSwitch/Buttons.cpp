@@ -1,3 +1,4 @@
+#include "Arduino.h"
 /*
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -24,7 +25,7 @@ void buttons_onCycle(va_list ap) {
 }
 
 Buttons::Buttons()
-  : processMs(0) {
+  : processMs(0), repeatMs(0), lastButton(0) {
 }
 
 void Buttons::setup() {
@@ -44,28 +45,50 @@ void Buttons::onCycle() {
   processMs = util_ms();
 }
 
+bool Buttons::canProcess(uint8_t pin) {
+  if (digitalRead(pin) != LOW){
+    return false;
+  }
+
+  if(lastButton == pin) {
+    if (util_ms() - repeatMs < BT_REP_PRESS_MS) {
+      return false;
+    } else {
+      lastButton = 0;
+      repeatMs = 0;
+    }
+  } else {
+    lastButton = pin;
+    repeatMs = util_ms();
+  }
+
+  return true;
+}
+
 void Buttons::readButtons() {
-  if (digitalRead(BT_PIN_MENU) == LOW) {
+  if (canProcess(BT_PIN_MENU)) {
     #if LOG && LOG_BT
       log(F("%s BTN MENU"), NAME);
     #endif
     eb_fire(BusEvent::BTN_MENU);
+    eb_fire(BusEvent::YAMAHA_TRIGGER_ON);
 
-  } else if (digitalRead(BT_PIN_OK) == LOW) {
+  } else if (canProcess(BT_PIN_OK)) {
     #if LOG && LOG_BT
       log(F("%s BTN OK"), NAME);
     #endif
     eb_fire(BusEvent::BTN_OK);
+     eb_fire(BusEvent::YAMAHA_TRIGGER_OFF);
 
-  } else if (digitalRead(BT_PIN_CANCEL) == LOW) {
-  #if LOG && LOG_BT
-    log(F("%s BTN OK"), NAME);
-  #endif
+  } else if (canProcess(BT_PIN_CANCEL)) {
+    #if LOG && LOG_BT
+      log(F("%s BTN CANCEL"), NAME);
+    #endif
     eb_fire(BusEvent::BTN_CANCEL);
   }
 }
 
 void Buttons::setupButton(uint8_t pin) {
   pinMode(pin, INPUT);
-  digitalWrite(pin, HIGH);  // enable pull-up resistor
+  pinMode(pin, INPUT_PULLUP);
 }

@@ -1,3 +1,4 @@
+#include "Arduino.h"
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -14,48 +15,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <IRremote.hpp>
-#include "ArdLog.h"
-#include "Util.h"
-#include "EventBus.h"
-#include "Buttons.h"
 #include "YamahaTrigger.h"
-#include "SpeakerRelay.h"
-#include "SubRelay.h"
 
-Buttons* btn = new Buttons();
-YamahaTrigger* yt = new YamahaTrigger();
-SpeakerRelay* sr = new SpeakerRelay();
-SubRelay* sub = new SubRelay();
+YamahaTrigger* refAt;
 
-const static uint8_t DEVICES = 4;
-Device* dev[DEVICES] = { btn, yt, sr, sub };
+YamahaTrigger::YamahaTrigger(): currentTriggerLevel(LOW), lastChangeMs(0) {
 
-void setup() {
-
-  #if LOG
-    log_setup();
-  #endif
-
-  #if LOG && LOG_SW
-    log(F("\n\n### SETUP ###"));
-  #endif
-
-  util_cycle();
-  execSetup();
 }
 
-void loop() {
-  #if LOG && LOG_SW
-    log(F("### LOOP ###"));
-  #endif
-
-  util_cycle();
-  eb_fire(BusEvent::CYCLE);
+void at_onCycle(va_list ap) {
+  refAt->onCycle();
 }
 
-void execSetup() {
-  for (uint8_t i = 0; i < DEVICES; i++) {
-    dev[i]->setup();
+void YamahaTrigger::onCycle() {
+  uint8_t triggerLevel = digitalRead(YT_TRIG_PIN);
+
+  if(triggerLevel == currentTriggerLevel) {
+    lastChangeMs = 0;
+    return;
   }
+
+  if(lastChangeMs == 0) {
+    lastChangeMs = util_ms();
+    return;
+  }
+
+  if(util_ms() - lastChangeMs < YT_STATE_CHANGE_MS) {
+    return;
+  }
+
+  currentTriggerLevel = triggerLevel;
+  lastChangeMs = 0;
+
+  #if LOG && LOG_AT
+    log(F("%s AMP %d"), NAME, triggerLevel);
+  #endif
+  eb_fire(triggerLevel == HIGH ? BusEvent::YAMAHA_TRIGGER_ON:BusEvent::YAMAHA_TRIGGER_OFF);
+}
+
+void YamahaTrigger::setup() {
+  pinMode(YT_TRIG_PIN, INPUT);
+  refAt = this;
+  eb_reg(BusEvent::CYCLE, &at_onCycle);
 }

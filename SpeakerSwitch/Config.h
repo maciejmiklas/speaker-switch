@@ -18,30 +18,30 @@
 #define CONFIG_H
 
 #include <Arduino.h>
-#include <avr/power.h>
-
 
 // ######## DIGITAL PINs ########
-const static uint8_t APIN_D1 = 1;
-const static uint8_t APIN_D2 = 2;
-const static uint8_t APIN_D3 = 3;
-const static uint8_t APIN_D4 = 4;
-const static uint8_t APIN_D5 = 5;
-const static uint8_t APIN_D6 = 6;
-const static uint8_t APIN_D7 = 7;
-const static uint8_t APIN_D8 = 8;
-const static uint8_t APIN_D9 = 9;
-const static uint8_t APIN_D10 = 10;
-const static uint8_t APIN_D11 = 11;
-const static uint8_t APIN_D12 = 12;
+const static uint8_t DPIN_1 = 1;
+const static uint8_t DPIN_2 = 2; // LCD
+const static uint8_t DPIN_3 = 3; // LCD
+const static uint8_t DPIN_4 = 4; // LCD
+const static uint8_t DPIN_5 = 5; // LCD
+const static uint8_t DPIN_6 = 6; // SU_RELAY_PIN
+const static uint8_t DPIN_7 = 7; // LCD
+const static uint8_t DPIN_8 = 8; // SR_RELAY_PIN
+const static uint8_t DPIN_9 = 9;
+const static uint8_t DPIN_10 = 10;
+const static uint8_t DPIN_11 = 11; // LCD
+const static uint8_t DPIN_12 = 12; // LCD
 
 // ######## ANALOG PINs ########
-const static uint8_t APIN_A0 = 0;
-const static uint8_t APIN_A1 = 1; // BT_PIN_OK
-const static uint8_t APIN_A2 = 2; // BT_PIN_CANCEL
-const static uint8_t APIN_A3 = 3; // BT_PIN_MENU
-const static uint8_t APIN_A4 = 4;
-const static uint8_t APIN_A5 = 5;
+const static uint8_t APIN_0 = A0; // LCD
+const static uint8_t APIN_1 = A1; // BT_PIN_OK
+const static uint8_t APIN_2 = A2; // BT_PIN_CANCEL
+const static uint8_t APIN_3 = A3; // BT_PIN_MENU
+const static uint8_t APIN_4 = A4; // YT_TRIG_PIN
+const static uint8_t APIN_5 = A5; 
+const static uint8_t APIN_6 = A6;
+const static uint8_t APIN_7 = A7;
 
 // ######## ArdLog(AL) ########
 const static uint32_t AL_SERIAL_SPEED = 115200;
@@ -53,9 +53,21 @@ const static uint8_t AL_PGBUF_SIZE = 64;
 const static uint8_t AL_SBUF_SIZE = 96;
 
 // ######## Buttons(BT) ########
-const static uint8_t BT_PIN_MENU = APIN_A3;
-const static uint8_t BT_PIN_OK = APIN_A1;
-const static uint8_t BT_PIN_CANCEL = APIN_A2;
-const static uint8_t BT_PRESS_MS = 20;
+const static uint8_t BT_PIN_MENU = PIN_A3;
+const static uint8_t BT_PIN_OK = PIN_A1;
+const static uint8_t BT_PIN_CANCEL = PIN_A2;
+const static uint8_t BT_PRESS_MS = 50;
+const static uint8_t BT_REP_PRESS_MS = 200;
+
+// ######## YamahaTrigger(YT) ########
+/* Number of milliseconds that the 12V amp reading has to remain low or high to flip the state. */
+const static uint16_t YT_STATE_CHANGE_MS = 100;
+const static uint8_t YT_TRIG_PIN = APIN_4;
+
+// ######## SpeakerRelay(SR) ########
+const static uint8_t SR_RELAY_PIN = DPIN_8;
+
+// ######## SubRelay(SU) ########
+const static uint8_t SU_RELAY_PIN = DPIN_6;
 
 #endif  // CONFIG_H

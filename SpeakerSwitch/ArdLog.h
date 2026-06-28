@@ -24,10 +24,22 @@
 #define LOG true
 
 /** Enable logger for: SpeakerSwitch */
-#define LOG_SW true
+#define LOG_SW false
 
 /** Enable logger for: EventBus */
-#define LOG_EB false
+#define LOG_EB true
+
+/** Enable logger for: Buttons */
+#define LOG_BT true
+
+/** Enable logger for: YamahaTrigger */
+#define LOG_YT true
+
+/** Enable logger for: SpeakerRelay */
+#define LOG_SR true
+
+/** Enable logger for: SubRelay */
+#define LOG_SU true
 
 void log_setup();
 void log_cycle();

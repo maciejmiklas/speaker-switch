@@ -1,3 +1,4 @@
+#include "Arduino.h"
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -14,39 +15,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef EVENTBUS_H_
-#define EVENTBUS_H_
+#include "SubRelay.h"
 
-#include "Arduino.h"
-#include "ArdLog.h"
+SubRelay* subRef;
 
-static const uint8_t EVENTS_SIZE = 7;
+SubRelay::SubRelay() {
 
-/* To add new event: 1) Insert new enumaration into BusEvent 2) Increase #EVENTS_SIZE 3) Insert new enum into #BUS_LISTENERS */
-enum class BusEvent {
+}
 
-  /* 12V yamaha trigger is on. */
-  YAMAHA_TRIGGER_ON = 10,
+void sur_onYamahaTriggerOn(va_list ap) {
+  subRef->onYamahaTriggerOn();
+}
 
-  /* 12V yamaha trigger is off. */
-  YAMAHA_TRIGGER_OFF = 11,
+void sur_onYamahaTriggerOff(va_list ap) {
+  subRef->onYamahaTriggerOff();
+}
 
-  /* Button MENU pressed. */
-  BTN_MENU = 20,
+void SubRelay::onYamahaTriggerOn() {
+  #if LOG && LOG_SU
+      log(F("%s YAM SUB ON"), NAME);
+  #endif
+  digitalWrite(SU_RELAY_PIN, HIGH); 
+}
 
-  /* Button OK pressed. */
-  BTN_OK = 21,
+void SubRelay::onYamahaTriggerOff() {
+  #if LOG && LOG_SU
+      log(F("SR YAM SUB OFF"));
+  #endif
+  digitalWrite(SU_RELAY_PIN, LOW); 
+}
 
-  /* Button CANCEL pressed. */
-  BTN_CANCEL = 22,
+void SubRelay::setup() {
+  subRef = this;
 
-  /* IR lern mode on for SUB. */
-  LERN_SUB_IR = 100,
+  pinMode(SU_RELAY_PIN, OUTPUT);
+  digitalWrite(SU_RELAY_PIN, LOW); 
 
-  CYCLE = 255
-};
-
-void eb_fire(BusEvent event, ...);
-void eb_reg(BusEvent event, void (*func)(va_list));
-
-#endif /* EVENTBUS_H_ */
+  eb_reg(BusEvent::YAMAHA_TRIGGER_ON, &sur_onYamahaTriggerOn);
+  eb_reg(BusEvent::YAMAHA_TRIGGER_OFF, &sur_onYamahaTriggerOff);
+}

@@ -1,3 +1,4 @@
+#include "Arduino.h"
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -14,39 +15,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef EVENTBUS_H_
-#define EVENTBUS_H_
+#include "SpeakerRelay.h"
 
-#include "Arduino.h"
-#include "ArdLog.h"
+SpeakerRelay* srRef;
 
-static const uint8_t EVENTS_SIZE = 7;
+SpeakerRelay::SpeakerRelay() {
 
-/* To add new event: 1) Insert new enumaration into BusEvent 2) Increase #EVENTS_SIZE 3) Insert new enum into #BUS_LISTENERS */
-enum class BusEvent {
+}
 
-  /* 12V yamaha trigger is on. */
-  YAMAHA_TRIGGER_ON = 10,
+void sr_onYamahaTriggerOn(va_list ap) {
+  srRef->onYamahaTriggerOn();
+}
 
-  /* 12V yamaha trigger is off. */
-  YAMAHA_TRIGGER_OFF = 11,
+void sr_onYamahaTriggerOff(va_list ap) {
+  srRef->onYamahaTriggerOff();
+}
 
-  /* Button MENU pressed. */
-  BTN_MENU = 20,
+void SpeakerRelay::onYamahaTriggerOn() {
+  #if LOG && LOG_SR
+      log(F("%s YAM SPK ON"), NAME);
+  #endif
+  digitalWrite(SR_RELAY_PIN, HIGH); 
+}
 
-  /* Button OK pressed. */
-  BTN_OK = 21,
+void SpeakerRelay::onYamahaTriggerOff() {
+  #if LOG && LOG_SR
+      log(F("SR YAM SPK OFF"));
+  #endif
+  digitalWrite(SR_RELAY_PIN, LOW); 
+}
 
-  /* Button CANCEL pressed. */
-  BTN_CANCEL = 22,
+void SpeakerRelay::setup() {
+  srRef = this;
 
-  /* IR lern mode on for SUB. */
-  LERN_SUB_IR = 100,
+  pinMode(SR_RELAY_PIN, OUTPUT);
+  digitalWrite(SR_RELAY_PIN, LOW); 
 
-  CYCLE = 255
-};
-
-void eb_fire(BusEvent event, ...);
-void eb_reg(BusEvent event, void (*func)(va_list));
-
-#endif /* EVENTBUS_H_ */
+  eb_reg(BusEvent::YAMAHA_TRIGGER_ON, &sr_onYamahaTriggerOn);
+  eb_reg(BusEvent::YAMAHA_TRIGGER_OFF, &sr_onYamahaTriggerOff);
+}

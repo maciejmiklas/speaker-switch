@@ -22,8 +22,8 @@ static const uint8_t FN_NO_IDX = 250;
 static const uint8_t LISTNERS_MAX = 10;
 
 static BusEvent BUS_LIS_TYPES[EVENTS_SIZE]{
-  BusEvent::AMP_TRIGGER_ON,
-  BusEvent::AMP_TRIGGER_OFF,
+  BusEvent::YAMAHA_TRIGGER_ON,
+  BusEvent::YAMAHA_TRIGGER_OFF,
   BusEvent::BTN_MENU,
   BusEvent::BTN_OK,
   BusEvent::BTN_CANCEL,
@@ -51,23 +51,23 @@ uint8_t eb_getFnIdx(BusEvent event) {
 void eb_reg(BusEvent event, void((*fn)(va_list))) {
   uint8_t enentIdx = eb_getFnIdx(event);
   if (enentIdx == FN_NO_IDX) {
-#if LOG
-    log(F("%s NO EVENT %d"), NAME, event);
-#endif
+  #if LOG
+      log(F("%s NO EVENT %d"), NAME, event);
+  #endif
     return;
   }
 
   uint8_t fnIdx = BUS_LIST_FN_SIZE[enentIdx]++;
   if (fnIdx >= LISTNERS_MAX) {
-#if LOG
-    log(F("%s LN OVERFLOW"), NAME);
-#endif
+  #if LOG
+      log(F("%s LN OVERFLOW"), NAME);
+  #endif
     return;
   }
   BUS_LIST_FN[enentIdx][fnIdx] = fn;
-#if LOG && LOG_EB
-  log(F("%s REG %d=%d"), NAME, event, fnIdx);
-#endif
+  #if LOG && LOG_EB
+    log(F("%s REG %d=%d"), NAME, event, fnIdx);
+  #endif
 }
 
 void eb_fire(BusEvent event, ...) {
@@ -78,11 +78,11 @@ void eb_fire(BusEvent event, ...) {
   uint8_t enentIdx = eb_getFnIdx(event);
   uint8_t eventsSize = BUS_LIST_FN_SIZE[enentIdx];
 
-#if LOG && LOG_EB
-  if (event != BusEvent::CYCLE && event != BusEvent::PROBE) {
-    log(F("%s EVENT %d->%d"), NAME, event, eventsSize);
-  }
-#endif
+  #if LOG && LOG_EB
+    if (event != BusEvent::CYCLE) {
+      log(F("%s EVENT %d->%d"), NAME, event, eventsSize);
+    }
+  #endif
 
   for (uint8_t fnIdx = 0; fnIdx < eventsSize; fnIdx++) {
     BUS_LIST_FN[enentIdx][fnIdx](ap);

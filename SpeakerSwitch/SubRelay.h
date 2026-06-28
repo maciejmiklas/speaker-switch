@@ -1,3 +1,4 @@
+#include "Arduino.h"
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -14,39 +15,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef EVENTBUS_H_
-#define EVENTBUS_H_
+#ifndef SUB_RELAY_H
+#define SUB_RELAY_H
 
-#include "Arduino.h"
 #include "ArdLog.h"
+#include "EventBus.h"
+#include "Device.h"
+#include "Util.h"
 
-static const uint8_t EVENTS_SIZE = 7;
+class SubRelay : public Device {
+public:
+  SubRelay();
 
-/* To add new event: 1) Insert new enumaration into BusEvent 2) Increase #EVENTS_SIZE 3) Insert new enum into #BUS_LISTENERS */
-enum class BusEvent {
+  void onYamahaTriggerOff();
+  void onYamahaTriggerOn();
 
-  /* 12V yamaha trigger is on. */
-  YAMAHA_TRIGGER_ON = 10,
+  // from Device.h
+  void setup();
 
-  /* 12V yamaha trigger is off. */
-  YAMAHA_TRIGGER_OFF = 11,
+private:
+  static constexpr const char* NAME = "SU";
 
-  /* Button MENU pressed. */
-  BTN_MENU = 20,
-
-  /* Button OK pressed. */
-  BTN_OK = 21,
-
-  /* Button CANCEL pressed. */
-  BTN_CANCEL = 22,
-
-  /* IR lern mode on for SUB. */
-  LERN_SUB_IR = 100,
-
-  CYCLE = 255
 };
 
-void eb_fire(BusEvent event, ...);
-void eb_reg(BusEvent event, void (*func)(va_list));
-
-#endif /* EVENTBUS_H_ */
+#endif  // SUB_RELAY_H

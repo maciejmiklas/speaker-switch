@@ -39,9 +39,9 @@ inline void Logger::copyPGM(const __FlashStringHelper *ifsh) {
 
 void Logger::setup() {
   Serial.begin(AL_SERIAL_SPEED);
-#if LOG_FREE_RAM
-  log(F("LOG ON,RAM:%u"), getFreeRAM());
-#endif
+  #if LOG_FREE_RAM
+    log(F("LOG ON,RAM:%u"), getFreeRAM());
+  #endif
 }
 
 void Logger::logRAM(char const *msg) {
@@ -87,9 +87,9 @@ void log_setup() {
 }
 
 void log_cycle() {
-#if LOG_FREE_RAM
-  logger->lnChangeRAM();
-#endif
+  #if LOG_FREE_RAM
+    logger->lnChangeRAM();
+  #endif
 }
 
 void log(const __FlashStringHelper *ifsh, ...) {

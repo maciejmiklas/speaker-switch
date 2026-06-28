@@ -1,3 +1,4 @@
+#include "Arduino.h"
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -34,9 +35,12 @@ public:
 private:
   static constexpr const char* NAME = "BT";
   uint32_t processMs;
+  uint32_t repeatMs;
+  uint8_t lastButton;
 
   void setupButton(uint8_t pin);
   void readButtons();
+  bool canProcess(uint8_t pin);
 };
 
 #endif  // BUTTONS_H

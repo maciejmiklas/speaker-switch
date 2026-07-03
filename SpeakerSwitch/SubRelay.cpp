@@ -33,14 +33,14 @@ void sur_onYamahaTriggerOff(va_list ap) {
 
 void SubRelay::onYamahaTriggerOn() {
   #if LOG && LOG_SU
-      log(F("%s YAM SUB ON"), NAME);
+      log(F("%s YAM ON"), NAME);
   #endif
   digitalWrite(SU_RELAY_PIN, HIGH); 
 }
 
 void SubRelay::onYamahaTriggerOff() {
   #if LOG && LOG_SU
-      log(F("SR YAM SUB OFF"));
+      log(F("SR YAM OFF"));
   #endif
   digitalWrite(SU_RELAY_PIN, LOW); 
 }

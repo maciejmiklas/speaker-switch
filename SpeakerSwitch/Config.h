@@ -28,7 +28,7 @@ const static uint8_t DPIN_5 = 5; // LCD
 const static uint8_t DPIN_6 = 6; // SU_RELAY_PIN
 const static uint8_t DPIN_7 = 7; // LCD
 const static uint8_t DPIN_8 = 8; // SR_RELAY_PIN
-const static uint8_t DPIN_9 = 9;
+const static uint8_t DPIN_9 = 9; // IR_RECEIVE_PIN
 const static uint8_t DPIN_10 = 10;
 const static uint8_t DPIN_11 = 11; // LCD
 const static uint8_t DPIN_12 = 12; // LCD
@@ -61,7 +61,7 @@ const static uint8_t BT_REP_PRESS_MS = 200;
 
 // ######## YamahaTrigger(YT) ########
 /* Number of milliseconds that the 12V amp reading has to remain low or high to flip the state. */
-const static uint16_t YT_STATE_CHANGE_MS = 100;
+const static uint8_t YT_STATE_CHANGE_MS = 100;
 const static uint8_t YT_TRIG_PIN = APIN_4;
 
 // ######## SpeakerRelay(SR) ########
@@ -69,5 +69,9 @@ const static uint8_t SR_RELAY_PIN = DPIN_8;
 
 // ######## SubRelay(SU) ########
 const static uint8_t SU_RELAY_PIN = DPIN_6;
+
+// ######## IrReceiver(IR) ########
+const static uint8_t IR_RECEIVE_PIN = DPIN_9;
+const static uint16_t IR_STATE_CHANGE_MS = 1000;
 
 #endif  // CONFIG_H

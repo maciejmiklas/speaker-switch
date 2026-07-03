@@ -33,14 +33,14 @@ void sr_onYamahaTriggerOff(va_list ap) {
 
 void SpeakerRelay::onYamahaTriggerOn() {
   #if LOG && LOG_SR
-      log(F("%s YAM SPK ON"), NAME);
+      log(F("%s YAM ON"), NAME);
   #endif
   digitalWrite(SR_RELAY_PIN, HIGH); 
 }
 
 void SpeakerRelay::onYamahaTriggerOff() {
   #if LOG && LOG_SR
-      log(F("SR YAM SPK OFF"));
+      log(F("SR YAM OFF"));
   #endif
   digitalWrite(SR_RELAY_PIN, LOW); 
 }

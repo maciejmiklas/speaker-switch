@@ -68,23 +68,24 @@ bool Buttons::canProcess(uint8_t pin) {
 void Buttons::readButtons() {
   if (canProcess(BT_PIN_MENU)) {
     #if LOG && LOG_BT
-      log(F("%s BTN MENU"), NAME);
+      log(F("%s MENU"), NAME);
     #endif
     eb_fire(BusEvent::BTN_MENU);
     eb_fire(BusEvent::YAMAHA_TRIGGER_ON);
 
   } else if (canProcess(BT_PIN_OK)) {
     #if LOG && LOG_BT
-      log(F("%s BTN OK"), NAME);
+      log(F("%s OK"), NAME);
     #endif
     eb_fire(BusEvent::BTN_OK);
-     eb_fire(BusEvent::YAMAHA_TRIGGER_OFF);
+    eb_fire(BusEvent::YAMAHA_TRIGGER_OFF);
 
   } else if (canProcess(BT_PIN_CANCEL)) {
     #if LOG && LOG_BT
-      log(F("%s BTN CANCEL"), NAME);
+      log(F("%s CANCEL"), NAME);
     #endif
     eb_fire(BusEvent::BTN_CANCEL);
+    eb_fire(BusEvent::IR_SUB_LEARN);
   }
 }
 

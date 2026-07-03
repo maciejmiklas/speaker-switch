@@ -20,30 +20,44 @@
 #include "Arduino.h"
 #include "ArdLog.h"
 
-static const uint8_t EVENTS_SIZE = 7;
-
 /* To add new event: 1) Insert new enumaration into BusEvent 2) Increase #EVENTS_SIZE 3) Insert new enum into #BUS_LISTENERS */
-enum class BusEvent {
+enum class BusEvent: uint8_t {
+
+  // #### Values are indexed! ####
+  CYCLE = 0,
 
   /* 12V yamaha trigger is on. */
-  YAMAHA_TRIGGER_ON = 10,
+  YAMAHA_TRIGGER_ON,
 
   /* 12V yamaha trigger is off. */
-  YAMAHA_TRIGGER_OFF = 11,
+  YAMAHA_TRIGGER_OFF,
 
   /* Button MENU pressed. */
-  BTN_MENU = 20,
+  BTN_MENU,
 
   /* Button OK pressed. */
-  BTN_OK = 21,
+  BTN_OK,
 
   /* Button CANCEL pressed. */
-  BTN_CANCEL = 22,
+  BTN_CANCEL,
 
-  /* IR lern mode on for SUB. */
-  LERN_SUB_IR = 100,
+  /* IR command to flip SUB. */
+  IR_SUB_CMD,
 
-  CYCLE = 255
+  /* IR learn mode on for SUB. */
+  IR_SUB_LEARN,
+
+  /* IR has learned value 1. */
+  IR_SUB_LEARNED_1,
+
+  /* IR has learned value 1. */
+  IR_SUB_LEARNED_2,
+
+  /* IR has learned both values */
+  IR_SUB_LEARNED_OK,
+
+  /* Number of elements in this enum. */
+  COUNT
 };
 
 void eb_fire(BusEvent event, ...);

@@ -14,49 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#ifndef IR_SUB_RECEIVER_H
+#define IR_SUB_RECEIVER_H
+
 #include "ArdLog.h"
-#include "Util.h"
 #include "EventBus.h"
-#include "Buttons.h"
-#include "YamahaTrigger.h"
-#include "SpeakerRelay.h"
-#include "SubRelay.h"
-#include "IrSubReceiver.h"
+#include "Device.h"
+#include "Util.h"
 
-Buttons* btn = new Buttons();
-YamahaTrigger* yt = new YamahaTrigger();
-SpeakerRelay* sr = new SpeakerRelay();
-SubRelay* sub = new SubRelay();
-IrSubReceiver* irs = new IrSubReceiver();
+class IrSubReceiver : public Device {
+public:
+  IrSubReceiver();
 
-const static uint8_t DEVICES = 5;
-Device* dev[DEVICES] = { btn, yt, sr, sub, irs };
+  void onCycle();
 
-void setup() {
+  // from Device.h
+  void setup();
 
-  #if LOG
-    log_setup();
-  #endif
+  void onLearn();
 
-  #if LOG && LOG_SW
-    log(F("\n\n### SETUP ###"));
-  #endif
+private:
+  static constexpr const char* NAME = "IT";
+  uint32_t lastChangeMs;
+  uint32_t irSignal1;
+  uint32_t irSignal2;
+  uint32_t irLernSignal1;
+  uint32_t irLernSignal2;
+  bool lerning;
+  void learn();
+  void processIr();
+};
 
-  util_cycle();
-  execSetup();
-}
-
-void loop() {
-  #if LOG && LOG_SW
-    log(F("### LOOP ###"));
-  #endif
-
-  util_cycle();
-  eb_fire(BusEvent::CYCLE);
-}
-
-void execSetup() {
-  for (uint8_t i = 0; i < DEVICES; i++) {
-    dev[i]->setup();
-  }
-}
+#endif  // IR_SUB_RECEIVER_H

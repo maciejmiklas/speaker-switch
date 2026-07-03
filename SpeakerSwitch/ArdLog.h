@@ -41,6 +41,9 @@
 /** Enable logger for: SubRelay */
 #define LOG_SU true
 
+/** Enable logger for: IrReceiver */
+#define LOG_IR true
+
 void log_setup();
 void log_cycle();
 void log(const __FlashStringHelper *ifsh, ...);

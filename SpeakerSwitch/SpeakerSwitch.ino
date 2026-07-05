@@ -22,15 +22,18 @@
 #include "SpeakerRelay.h"
 #include "SubRelay.h"
 #include "IrSubReceiver.h"
+#include "LcdDisplay.h"
+
 
 Buttons* btn = new Buttons();
 YamahaTrigger* yt = new YamahaTrigger();
 SpeakerRelay* sr = new SpeakerRelay();
 SubRelay* sub = new SubRelay();
 IrSubReceiver* irs = new IrSubReceiver();
+LcdDisplay* lcd = new LcdDisplay();
 
-const static uint8_t DEVICES = 5;
-Device* dev[DEVICES] = { btn, yt, sr, sub, irs };
+const static uint8_t DEVICES = 6;
+Device* dev[DEVICES] = { btn, yt, sr, sub, irs, lcd };
 
 void setup() {
 

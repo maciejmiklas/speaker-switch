@@ -14,34 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef IR_SUB_RECEIVER_H
-#define IR_SUB_RECEIVER_H
+#ifndef LCD_DISPLAY_H
+#define LCD_DISPLAY_H
 
 #include "ArdLog.h"
 #include "EventBus.h"
 #include "Device.h"
 #include "Util.h"
+#include "LiquidCrystal.h"
 
-class IrSubReceiver : public Device {
+class LcdDisplay : public Device {
 public:
-  IrSubReceiver();
+  LcdDisplay();
 
-  void onCycle();
-  void setup();   // from Device.h
-  void onLearn();
-  void onSave();
-  void onCancel();
+  void setup(); // from Device.h
 
 private:
-  static constexpr const char* NAME = "IT";
-  uint32_t lastChangeMs;
-  uint32_t irSignal1;
-  uint32_t irSignal2;
-  uint32_t irLernSignal1;
-  uint32_t irLernSignal2;
-  bool lerning;
-  void learn();
-  void processIr();
+  static constexpr const char* NAME = "LC";
+  void clear(uint8_t row);
+  void print(uint8_t col, uint8_t row, uint8_t size, const char *fmt, ...);
+  void cleanRight(char *array, short from, short size);
 };
 
-#endif  // IR_SUB_RECEIVER_H
+#endif  // LCD_DISPLAY_H

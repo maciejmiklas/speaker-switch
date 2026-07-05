@@ -71,14 +71,14 @@ void Buttons::readButtons() {
       log(F("%s MENU"), NAME);
     #endif
     eb_fire(BusEvent::BTN_MENU);
-    eb_fire(BusEvent::YAMAHA_TRIGGER_ON);
+    eb_fire(BusEvent::IR_SUB_LEARN);
 
   } else if (canProcess(BT_PIN_OK)) {
     #if LOG && LOG_BT
       log(F("%s OK"), NAME);
     #endif
     eb_fire(BusEvent::BTN_OK);
-    eb_fire(BusEvent::YAMAHA_TRIGGER_OFF);
+    eb_fire(BusEvent::IR_SUB_SAVE);
 
   } else if (canProcess(BT_PIN_CANCEL)) {
     #if LOG && LOG_BT

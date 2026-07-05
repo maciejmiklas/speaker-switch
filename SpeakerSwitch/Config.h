@@ -21,17 +21,17 @@
 
 // ######## DIGITAL PINs ########
 const static uint8_t DPIN_1 = 1;
-const static uint8_t DPIN_2 = 2; // LCD
-const static uint8_t DPIN_3 = 3; // LCD
-const static uint8_t DPIN_4 = 4; // LCD
-const static uint8_t DPIN_5 = 5; // LCD
+const static uint8_t DPIN_2 = 2; // LC_LCD_D7
+const static uint8_t DPIN_3 = 3; // LC_LCD_D6
+const static uint8_t DPIN_4 = 4; // LC_LCD_D5
+const static uint8_t DPIN_5 = 5; // LC_LCD_D4
 const static uint8_t DPIN_6 = 6; // SU_RELAY_PIN
-const static uint8_t DPIN_7 = 7; // LCD
+const static uint8_t DPIN_7 = 7; // LC_LCD_K
 const static uint8_t DPIN_8 = 8; // SR_RELAY_PIN
 const static uint8_t DPIN_9 = 9; // IR_RECEIVE_PIN
 const static uint8_t DPIN_10 = 10;
-const static uint8_t DPIN_11 = 11; // LCD
-const static uint8_t DPIN_12 = 12; // LCD
+const static uint8_t DPIN_11 = 11; // LC_LCD_E
+const static uint8_t DPIN_12 = 12; // LC_LCD_RS
 
 // ######## ANALOG PINs ########
 const static uint8_t APIN_0 = A0; // LCD
@@ -73,5 +73,16 @@ const static uint8_t SU_RELAY_PIN = DPIN_6;
 // ######## IrReceiver(IR) ########
 const static uint8_t IR_RECEIVE_PIN = DPIN_9;
 const static uint16_t IR_STATE_CHANGE_MS = 1000;
+
+// ######## LcdDisplay(LC) ########
+const static uint8_t LC_LCD_RS = DPIN_12;
+const static uint8_t LC_LCD_E = DPIN_11;
+
+const static uint8_t LC_LCD_D4 = DPIN_5;
+const static uint8_t LC_LCD_D5 = DPIN_4;
+const static uint8_t LC_LCD_D6 = DPIN_3;
+const static uint8_t LC_LCD_D7 = DPIN_2;
+
+const static uint8_t LC_LCD_K = DPIN_7;
 
 #endif  // CONFIG_H

@@ -27,34 +27,38 @@ enum class BusEvent: uint8_t {
   CYCLE = 0,
 
   /* 12V yamaha trigger is on. */
-  YAMAHA_TRIGGER_ON,
+  YAMAHA_TRIGGER_ON, // 1
 
   /* 12V yamaha trigger is off. */
-  YAMAHA_TRIGGER_OFF,
+  YAMAHA_TRIGGER_OFF, // 2
 
   /* Button MENU pressed. */
-  BTN_MENU,
+  BTN_MENU, // 3
 
   /* Button OK pressed. */
-  BTN_OK,
+  BTN_OK, // 4
 
   /* Button CANCEL pressed. */
-  BTN_CANCEL,
+  BTN_CANCEL, // 5
 
   /* IR command to flip SUB. */
-  IR_SUB_CMD,
+  IR_SUB_CMD, // 6
 
   /* IR learn mode on for SUB. */
-  IR_SUB_LEARN,
+  IR_SUB_LEARN, // 7
 
   /* IR has learned value 1. */
-  IR_SUB_LEARNED_1,
+  IR_SUB_LEARNED_1, // 8
 
   /* IR has learned value 1. */
-  IR_SUB_LEARNED_2,
+  IR_SUB_LEARNED_2, // 9
 
   /* IR has learned both values */
-  IR_SUB_LEARNED_OK,
+  IR_SUB_LEARNED_OK, // 10
+
+  IR_SUB_SAVE, // 11
+
+  IR_SUB_CANCEL, // 11
 
   /* Number of elements in this enum. */
   COUNT

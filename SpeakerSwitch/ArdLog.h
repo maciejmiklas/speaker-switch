@@ -44,6 +44,10 @@
 /** Enable logger for: IrReceiver */
 #define LOG_IR true
 
+/** Enable logger for: LcdDisplay */
+#define LOG_LC true
+
+
 void log_setup();
 void log_cycle();
 void log(const __FlashStringHelper *ifsh, ...);

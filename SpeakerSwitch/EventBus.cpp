@@ -52,7 +52,7 @@ void eb_fire(BusEvent event, ...) {
 
   #if LOG && LOG_EB
     if (event != BusEvent::CYCLE) {
-      log(F("%s EVENT %d->%d"), NAME, event, eventsSize);
+      log(F("%s EVENT %d->%d"), NAME, enentIdx, eventsSize);      
     }
   #endif
 

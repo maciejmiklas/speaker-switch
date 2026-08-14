@@ -19,29 +19,34 @@
 
 #include <Arduino.h>
 
+static constexpr const char* APP_NAME = " Speaker Switch ";
+static constexpr const char* VERSION =  "     v2.00      ";
+
 // ######## DIGITAL PINs ########
-const static uint8_t DPIN_1 = 1;
-const static uint8_t DPIN_2 = 2; // LC_LCD_D7
-const static uint8_t DPIN_3 = 3; // LC_LCD_D6
-const static uint8_t DPIN_4 = 4; // LC_LCD_D5
-const static uint8_t DPIN_5 = 5; // LC_LCD_D4
-const static uint8_t DPIN_6 = 6; // SU_RELAY_PIN
-const static uint8_t DPIN_7 = 7; // LC_LCD_K
-const static uint8_t DPIN_8 = 8; // SR_RELAY_PIN
-const static uint8_t DPIN_9 = 9; // IR_RECEIVE_PIN
-const static uint8_t DPIN_10 = 10;
-const static uint8_t DPIN_11 = 11; // LC_LCD_E
-const static uint8_t DPIN_12 = 12; // LC_LCD_RS
+const static uint8_t DIO_0 = 0; //   [PIN:30, PD0] Hardware Serial RX/TX
+const static uint8_t DIO_1 = 1; //   [PIN:31, PD1] Hardware Serial RX/TX
+const static uint8_t DIO_2 = 2; //   [PIN:32, PD2] LC_LCD_D7
+const static uint8_t DIO_3 = 3; //   [PIN:01, PD3] LC_LCD_D6
+const static uint8_t DIO_4 = 4; //   [PIN:02, PD4] LC_LCD_D5
+const static uint8_t DIO_5 = 5; //   [PIN:09, PD5] LC_LCD_D4
+const static uint8_t DIO_6 = 6; //   [PIN:10, PD6] SU_RELAY_PIN
+const static uint8_t DIO_7 = 7; //   [PIN:11, PD7] LC_LCD_K
+const static uint8_t DIO_8 = 8; //   [PIN:12, PB0] SR_RELAY_PIN
+const static uint8_t DIO_9 = 9; //   [PIN:13, PB1] IR_RECEIVE_PIN
+const static uint8_t DIO_10 = 10; // [PIN:14, PB2] LC_LCD_RS
+const static uint8_t DIO_11 = 11; // [PIN:15, PB3] LC_LCD_E
+const static uint8_t DIO_12 = 12; // [PIN:16, PB4] 
+const static uint8_t DIO_13 = 13; // [PIN:17, PB5]
 
 // ######## ANALOG PINs ########
-const static uint8_t APIN_0 = A0; // LCD
-const static uint8_t APIN_1 = A1; // BT_PIN_OK
-const static uint8_t APIN_2 = A2; // BT_PIN_CANCEL
-const static uint8_t APIN_3 = A3; // BT_PIN_MENU
-const static uint8_t APIN_4 = A4; // YT_TRIG_PIN
-const static uint8_t APIN_5 = A5; 
-const static uint8_t APIN_6 = A6;
-const static uint8_t APIN_7 = A7;
+const static uint8_t AIO_0 = A0; // LCD
+const static uint8_t AIO_1 = A1; // BT_PIN_OK
+const static uint8_t AIO_2 = A2; // BT_PIN_CANCEL
+const static uint8_t AIO_3 = A3; // BT_PIN_MENU
+const static uint8_t AIO_4 = A4; // YT_TRIG_PIN
+const static uint8_t AIO_5 = A5; 
+const static uint8_t AIO_6 = A6;
+const static uint8_t AIO_7 = A7;
 
 // ######## ArdLog(AL) ########
 const static uint32_t AL_SERIAL_SPEED = 115200;
@@ -62,27 +67,30 @@ const static uint8_t BT_REP_PRESS_MS = 200;
 // ######## YamahaTrigger(YT) ########
 /* Number of milliseconds that the 12V amp reading has to remain low or high to flip the state. */
 const static uint8_t YT_STATE_CHANGE_MS = 100;
-const static uint8_t YT_TRIG_PIN = APIN_4;
+const static uint8_t YT_TRIG_PIN = AIO_4;
 
 // ######## SpeakerRelay(SR) ########
-const static uint8_t SR_RELAY_PIN = DPIN_8;
+const static uint8_t SR_RELAY_PIN = DIO_8;
 
 // ######## SubRelay(SU) ########
-const static uint8_t SU_RELAY_PIN = DPIN_6;
+const static uint8_t SU_RELAY_PIN = DIO_6;
 
 // ######## IrReceiver(IR) ########
-const static uint8_t IR_RECEIVE_PIN = DPIN_9;
+const static uint8_t IR_RECEIVE_PIN = DIO_9;
 const static uint16_t IR_STATE_CHANGE_MS = 1000;
 
 // ######## LcdDisplay(LC) ########
-const static uint8_t LC_LCD_RS = DPIN_12;
-const static uint8_t LC_LCD_E = DPIN_11;
+const static uint8_t LC_LCD_RS = DIO_10;
+const static uint8_t LC_LCD_E = DIO_11;
 
-const static uint8_t LC_LCD_D4 = DPIN_5;
-const static uint8_t LC_LCD_D5 = DPIN_4;
-const static uint8_t LC_LCD_D6 = DPIN_3;
-const static uint8_t LC_LCD_D7 = DPIN_2;
+const static uint8_t LC_LCD_D4 = DIO_5; 
+const static uint8_t LC_LCD_D5 = DIO_4; 
+const static uint8_t LC_LCD_D6 = DIO_3;
+const static uint8_t LC_LCD_D7 = DIO_2;
 
-const static uint8_t LC_LCD_K = DPIN_7;
+const static uint8_t LC_LCD_K = DIO_7;
+
+// ######## Display(DS) ########
+const static uint16_t DS_INFO_DELAY_MS = 2000;
 
 #endif  // CONFIG_H

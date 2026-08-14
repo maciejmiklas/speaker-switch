@@ -27,8 +27,8 @@ class SubRelay : public Device {
 public:
   SubRelay();
 
-  void onYamahaTriggerOff();
-  void onYamahaTriggerOn();
+  void onSubToYamaha();
+  void onSubToCambridge();
 
   // from Device.h
   void setup();

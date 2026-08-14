@@ -23,17 +23,20 @@
 #include "SubRelay.h"
 #include "IrSubReceiver.h"
 #include "LcdDisplay.h"
-
+#include "SpeakerSwitchDispatcher.h"
+#include "Display.h"
 
 Buttons* btn = new Buttons();
-YamahaTrigger* yt = new YamahaTrigger();
 SpeakerRelay* sr = new SpeakerRelay();
 SubRelay* sub = new SubRelay();
 IrSubReceiver* irs = new IrSubReceiver();
 LcdDisplay* lcd = new LcdDisplay();
+SpeakerSwitchDispatcher* ssd = new SpeakerSwitchDispatcher();
+YamahaTrigger* yt = new YamahaTrigger();
+Display* disp = new Display(lcd);
 
-const static uint8_t DEVICES = 6;
-Device* dev[DEVICES] = { btn, yt, sr, sub, irs, lcd };
+const static uint8_t DEVICES = 8;
+Device* dev[DEVICES] = { btn,  sr, sub, irs, lcd, ssd, yt, disp };
 
 void setup() {
 
@@ -47,12 +50,14 @@ void setup() {
 
   util_cycle();
   execSetup();
+
+  yt->reinitialize();
 }
 
 void loop() {
-  #if LOG && LOG_SW
-    log(F("### LOOP ###"));
-  #endif
+ // #if LOG && LOG_SW
+  //  log(F("### LOOP ###"));
+ // #endif
 
   util_cycle();
   eb_fire(BusEvent::CYCLE);

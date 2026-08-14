@@ -25,7 +25,8 @@ LcdDisplay::LcdDisplay() {
 
 }
 
-void LcdDisplay::print(uint8_t col, uint8_t row, uint8_t size, const char *fmt, ...) {
+void LcdDisplay::print(uint8_t row, uint8_t col, uint8_t size, const char *fmt, ...) {
+	
   lcd.setCursor(col, row);
 
 	char buf[size + 1];
@@ -46,28 +47,20 @@ void LcdDisplay::cleanRight(char *array, short from, short size) {
 }
 
 void LcdDisplay::clear(uint8_t row) {
+	
 	lcd.setCursor(0, row);
 	lcd.print("                ");
 	lcd.setCursor(0, row);
 }
 
-void lcd_onYamahaTriggerOn(va_list ap) {
-  //subRef->onYamahaTriggerOn();
-}
 
 // https://docs.arduino.cc/learn/electronics/lcd-displays/
 void LcdDisplay::setup() {
   lcdRef = this;
 
-  pinMode(LC_LCD_K, OUTPUT);
-  digitalWrite(LC_LCD_K, HIGH); 
-  
+	pinMode(LC_LCD_K, OUTPUT);
+	digitalWrite(LC_LCD_K, HIGH); 
+
   lcd.begin(16, 2);
   lcd.noAutoscroll();
-
-  clear(0);
-  clear(1);
-
-	lcd.setCursor(0, 0);
-	lcd.print("   WELCOME ;)   ");
 };

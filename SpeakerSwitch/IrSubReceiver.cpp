@@ -62,14 +62,13 @@ void IrSubReceiver::learn() {
       log(F("%s S2:%d"), NAME, irin);
     #endif
     eb_fire(BusEvent::IR_SUB_LEARNED_2, irin);
-
   }
 
   if(irLernSignal1 != 0 && irLernSignal2 != 0) {
     eb_fire(BusEvent::IR_SUB_LEARNED_OK);
     lerning = false;
   }
-
+  
 }
 
 void IrSubReceiver::onCancel() {

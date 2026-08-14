@@ -26,8 +26,9 @@ class IrSubReceiver : public Device {
 public:
   IrSubReceiver();
 
-  void onCycle();
   void setup();   // from Device.h
+
+  void onCycle();
   void onLearn();
   void onSave();
   void onCancel();

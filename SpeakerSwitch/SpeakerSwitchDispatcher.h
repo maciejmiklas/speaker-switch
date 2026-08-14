@@ -14,17 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef DEVICE_H_
-#define DEVICE_H_
+#ifndef SPEAKER_SWITCH_DESPATCHER_H
+#define SPEAKER_SWITCH_DESPATCHER_H
 
-#include <Arduino.h>
+#include "ArdLog.h"
+#include "EventBus.h"
+#include "Device.h"
+#include "Util.h"
 
-class Device {
+class SpeakerSwitchDispatcher : public Device {
 public:
+  SpeakerSwitchDispatcher();
 
-  /** Called only once after hard reset */
-  virtual void setup() = 0;
+  void setup(); // from Device.h
 
+  void onYamahaTriggerOn();
+  void onYamahaTriggerOff();
+  void onSubCmd();
+
+private:
+  static constexpr const char* NAME = "SD";
+  bool subCambridge;
 };
 
-#endif /* DEVICE_H_ */
+#endif  // SPEAKER_SWITCH_DESPATCHER_H

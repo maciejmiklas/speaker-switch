@@ -47,14 +47,24 @@ void YamahaTrigger::onCycle() {
   currentTriggerLevel = triggerLevel;
   lastChangeMs = 0;
 
-  #if LOG && LOG_AT
+  sendEvent(triggerLevel);
+}
+
+void inline YamahaTrigger::sendEvent(uint8_t triggerLevel) {
+  #if LOG && LOG_YT
     log(F("%s AMP %d"), NAME, triggerLevel);
   #endif
   eb_fire(triggerLevel == HIGH ? BusEvent::YAMAHA_TRIGGER_ON:BusEvent::YAMAHA_TRIGGER_OFF);
 }
 
+void YamahaTrigger::reinitialize() {
+  uint8_t triggerLevel = currentTriggerLevel = digitalRead(YT_TRIG_PIN);
+  sendEvent(triggerLevel);
+}
+
 void YamahaTrigger::setup() {
   pinMode(YT_TRIG_PIN, INPUT);
   refAt = this;
+
   eb_reg(BusEvent::CYCLE, &at_onCycle);
 }

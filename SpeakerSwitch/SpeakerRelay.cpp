@@ -23,34 +23,27 @@ SpeakerRelay::SpeakerRelay() {
 
 }
 
-void sr_onYamahaTriggerOn(va_list ap) {
-  srRef->onYamahaTriggerOn();
+void sr_onSpeakerToYamaha(va_list ap) {
+  srRef->onSpeakerToYamaha();
 }
 
-void sr_onYamahaTriggerOff(va_list ap) {
-  srRef->onYamahaTriggerOff();
+void sr_onSpeakerToCambridge(va_list ap) {
+  srRef->onSpeakerToCambridge();
 }
 
-void SpeakerRelay::onYamahaTriggerOn() {
-  #if LOG && LOG_SR
-      log(F("%s YAM ON"), NAME);
-  #endif
-  digitalWrite(SR_RELAY_PIN, HIGH); 
-}
-
-void SpeakerRelay::onYamahaTriggerOff() {
-  #if LOG && LOG_SR
-      log(F("SR YAM OFF"));
-  #endif
+void SpeakerRelay::onSpeakerToYamaha() {
   digitalWrite(SR_RELAY_PIN, LOW); 
+}
+
+void SpeakerRelay::onSpeakerToCambridge() {
+  digitalWrite(SR_RELAY_PIN, HIGH); 
 }
 
 void SpeakerRelay::setup() {
   srRef = this;
 
   pinMode(SR_RELAY_PIN, OUTPUT);
-  digitalWrite(SR_RELAY_PIN, LOW); 
 
-  eb_reg(BusEvent::YAMAHA_TRIGGER_ON, &sr_onYamahaTriggerOn);
-  eb_reg(BusEvent::YAMAHA_TRIGGER_OFF, &sr_onYamahaTriggerOff);
+  eb_reg(BusEvent::SPEAKER_TO_YAMAHA, &sr_onSpeakerToYamaha);
+  eb_reg(BusEvent::SPEAKER_TO_CAMBRIDGE, &sr_onSpeakerToCambridge);
 }

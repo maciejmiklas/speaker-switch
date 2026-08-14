@@ -32,10 +32,13 @@ public:
   // from Device.h
   void setup();
 
+  void reinitialize();
+
 private:
   static constexpr const char* NAME = "YT";
   uint32_t lastChangeMs;
   uint8_t currentTriggerLevel;
+  inline void sendEvent(uint8_t triggerLevel);
 };
 
 #endif  // YAM_TRIGGER_H

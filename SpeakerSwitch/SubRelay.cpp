@@ -23,34 +23,27 @@ SubRelay::SubRelay() {
 
 }
 
-void sur_onYamahaTriggerOn(va_list ap) {
-  subRef->onYamahaTriggerOn();
+void sur_onSubToYamaha(va_list ap) {
+  subRef->onSubToYamaha();
 }
 
-void sur_onYamahaTriggerOff(va_list ap) {
-  subRef->onYamahaTriggerOff();
+void sur_onSubToCambridge(va_list ap) {
+  subRef->onSubToCambridge();
 }
 
-void SubRelay::onYamahaTriggerOn() {
-  #if LOG && LOG_SU
-      log(F("%s YAM ON"), NAME);
-  #endif
-  digitalWrite(SU_RELAY_PIN, HIGH); 
-}
-
-void SubRelay::onYamahaTriggerOff() {
-  #if LOG && LOG_SU
-      log(F("SR YAM OFF"));
-  #endif
+void SubRelay::onSubToYamaha() {
   digitalWrite(SU_RELAY_PIN, LOW); 
+}
+
+void SubRelay::onSubToCambridge() {
+  digitalWrite(SU_RELAY_PIN, HIGH); 
 }
 
 void SubRelay::setup() {
   subRef = this;
 
   pinMode(SU_RELAY_PIN, OUTPUT);
-  digitalWrite(SU_RELAY_PIN, LOW); 
 
-  eb_reg(BusEvent::YAMAHA_TRIGGER_ON, &sur_onYamahaTriggerOn);
-  eb_reg(BusEvent::YAMAHA_TRIGGER_OFF, &sur_onYamahaTriggerOff);
+  eb_reg(BusEvent::SUB_TO_YAMAHA, &sur_onSubToYamaha);
+  eb_reg(BusEvent::SUB_TO_CAMBRIDGE, &sur_onSubToCambridge);
 }

@@ -1,4 +1,3 @@
-#include "Arduino.h"
 /*
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -66,26 +65,27 @@ bool Buttons::canProcess(uint8_t pin) {
 }
 
 void Buttons::readButtons() {
+  
+  uint8_t pin = LC_LCD_E;
+
   if (canProcess(BT_PIN_MENU)) {
     #if LOG && LOG_BT
       log(F("%s MENU"), NAME);
     #endif
     eb_fire(BusEvent::BTN_MENU);
-    eb_fire(BusEvent::IR_SUB_LEARN);
 
   } else if (canProcess(BT_PIN_OK)) {
     #if LOG && LOG_BT
       log(F("%s OK"), NAME);
     #endif
     eb_fire(BusEvent::BTN_OK);
-    eb_fire(BusEvent::IR_SUB_SAVE);
 
   } else if (canProcess(BT_PIN_CANCEL)) {
     #if LOG && LOG_BT
       log(F("%s CANCEL"), NAME);
     #endif
     eb_fire(BusEvent::BTN_CANCEL);
-    eb_fire(BusEvent::IR_SUB_LEARN);
+
   }
 }
 

@@ -27,8 +27,8 @@ class SpeakerRelay : public Device {
 public:
   SpeakerRelay();
 
-  void onYamahaTriggerOff();
-  void onYamahaTriggerOn();
+  void onSpeakerToYamaha();
+  void onSpeakerToCambridge();
 
   // from Device.h
   void setup();

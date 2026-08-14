@@ -14,26 +14,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LCD_DISPLAY_H
-#define LCD_DISPLAY_H
+#ifndef DISPLAY_H
+#define DISPLAY_H
 
 #include "ArdLog.h"
 #include "EventBus.h"
 #include "Device.h"
 #include "Util.h"
-#include "LiquidCrystal.h"
+#include "LcdDisplay.h"
 
-class LcdDisplay : public Device {
+class Display : public Device {
 public:
-  LcdDisplay();
+  Display(LcdDisplay* lcd);
 
-  void setup(); // from Device.h
-  void clear(uint8_t row);
-  void print(uint8_t row, uint8_t col, uint8_t size, const char *fmt, ...);
+  void onCycle();
+  void onSubToYamaha();
+  void onSubToCambridge();
+  void onSpeakerToYamaha();
+  void onSpeakerToCambridge();
+  void onYamahaTriggerOn();
+  void onYamahaTriggerOff();
+  void onRemoteInput();
+  void onMenuStart();
+  void onMenuEnd();
+
+  // from Device.h
+  void setup();
 
 private:
-  static constexpr const char* NAME = "LC";
-  void cleanRight(char *array, short from, short size);
+  static constexpr const char* NAME = "DS";
+  static constexpr const uint16_t INFO_TRIGGER_OFF = 65000;
+
+  bool speakerToCambridge;
+  bool subToCambridge;
+  bool autoUpdateEnabled;
+  uint16_t infoDisplayMs;
+  LcdDisplay* lcd;
+
+  void printSpeakersAssigment();
+  void resetInfoDisplay();
+  bool autoUpdateOn();
 };
 
-#endif  // LCD_DISPLAY_H
+#endif  // DISPLAY_H

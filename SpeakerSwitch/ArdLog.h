@@ -24,7 +24,7 @@
 #define LOG true
 
 /** Enable logger for: SpeakerSwitch */
-#define LOG_SW false
+#define LOG_SW true
 
 /** Enable logger for: EventBus */
 #define LOG_EB true
@@ -47,6 +47,11 @@
 /** Enable logger for: LcdDisplay */
 #define LOG_LC true
 
+/** Enable logger for: SpeakerSwitchDispatcher */
+#define LOG_SD true
+
+/** Enable logger for: Display */
+#define LOG_DS true
 
 void log_setup();
 void log_cycle();

@@ -15,35 +15,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "SubRelay.h"
+#ifndef RELAY_H
+#define RELAY_H
 
-SubRelay* subRef;
+#include "ArdLog.h"
+#include "EventBus.h"
+#include "Device.h"
+#include "Util.h"
 
-SubRelay::SubRelay() {
+class Relay : public Device {
+public:
+  Relay();
 
-}
+  void onYamahaTriggerOn();
+  void onYamahaTriggerOff();
+  void onSubCmd();
 
-void sur_onSubToYamaha(va_list ap) {
-  subRef->onSubToYamaha();
-}
+  // from Device.h
+  void setup();
 
-void sur_onSubToCambridge(va_list ap) {
-  subRef->onSubToCambridge();
-}
+private:
+  static constexpr const char* NAME = "RE";
+  bool subCambridge;
+  void spkToYamaha();
+  void spkToCambridge();
+  void subToYamaha();
+  void subToCambridge();
 
-void SubRelay::onSubToYamaha() {
-  digitalWrite(SU_RELAY_PIN, LOW); 
-}
+};
 
-void SubRelay::onSubToCambridge() {
-  digitalWrite(SU_RELAY_PIN, HIGH); 
-}
-
-void SubRelay::setup() {
-  subRef = this;
-
-  pinMode(SU_RELAY_PIN, OUTPUT);
-
-  eb_reg(BusEvent::SUB_TO_YAMAHA, &sur_onSubToYamaha);
-  eb_reg(BusEvent::SUB_TO_CAMBRIDGE, &sur_onSubToCambridge);
-}
+#endif  // SUB_RELAY_H

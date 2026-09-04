@@ -61,10 +61,10 @@ enum class BusEvent: uint8_t {
   IR_SUB_CANCEL, // 12
 
   /* Speaker switched to Yamaha */
-  SPEAKER_TO_YAMAHA, //13
+  ALL_SPK_TO_YAMAHA, //13
 
   /* Speaker switched to Camridge */
-  SPEAKER_TO_CAMBRIDGE, // 14
+  ALL_SPK_TO_CAMBRIDGE, // 14
 
   /* Sub switched to Yamaha */
   SUB_TO_YAMAHA, // 15

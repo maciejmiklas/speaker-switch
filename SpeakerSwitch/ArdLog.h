@@ -35,20 +35,14 @@
 /** Enable logger for: YamahaTrigger */
 #define LOG_YT true
 
-/** Enable logger for: SpeakerRelay */
-#define LOG_SR true
-
-/** Enable logger for: SubRelay */
-#define LOG_SU true
+/** Enable logger for: Relay */
+#define LOG_RE true
 
 /** Enable logger for: IrReceiver */
 #define LOG_IR true
 
 /** Enable logger for: LcdDisplay */
 #define LOG_LC true
-
-/** Enable logger for: SpeakerSwitchDispatcher */
-#define LOG_SD true
 
 /** Enable logger for: Display */
 #define LOG_DS true

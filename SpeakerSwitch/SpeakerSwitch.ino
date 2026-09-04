@@ -19,24 +19,20 @@
 #include "EventBus.h"
 #include "Buttons.h"
 #include "YamahaTrigger.h"
-#include "SpeakerRelay.h"
-#include "SubRelay.h"
+#include "Relay.h"
 #include "IrSubReceiver.h"
 #include "LcdDisplay.h"
-#include "SpeakerSwitchDispatcher.h"
 #include "Display.h"
 
 Buttons* btn = new Buttons();
-SpeakerRelay* sr = new SpeakerRelay();
-SubRelay* sub = new SubRelay();
+Relay* re = new Relay();
 IrSubReceiver* irs = new IrSubReceiver();
 LcdDisplay* lcd = new LcdDisplay();
-SpeakerSwitchDispatcher* ssd = new SpeakerSwitchDispatcher();
 YamahaTrigger* yt = new YamahaTrigger();
 Display* disp = new Display(lcd);
 
-const static uint8_t DEVICES = 8;
-Device* dev[DEVICES] = { btn,  sr, sub, irs, lcd, ssd, yt, disp };
+const static uint8_t DEVICES = 6;
+Device* dev[DEVICES] = { btn,  re, irs, lcd, yt, disp };
 
 void setup() {
 

@@ -29,9 +29,9 @@ const static uint8_t DIO_2 = 2; //   [PIN:32, PD2] LC_LCD_D7
 const static uint8_t DIO_3 = 3; //   [PIN:01, PD3] LC_LCD_D6
 const static uint8_t DIO_4 = 4; //   [PIN:02, PD4] LC_LCD_D5
 const static uint8_t DIO_5 = 5; //   [PIN:09, PD5] LC_LCD_D4
-const static uint8_t DIO_6 = 6; //   [PIN:10, PD6] SU_RELAY_PIN
+const static uint8_t DIO_6 = 6; //   [PIN:10, PD6] RE_SUB_PIN
 const static uint8_t DIO_7 = 7; //   [PIN:11, PD7] LC_LCD_K
-const static uint8_t DIO_8 = 8; //   [PIN:12, PB0] SR_RELAY_PIN
+const static uint8_t DIO_8 = 8; //   [PIN:12, PB0] RE_SPK_PIN
 const static uint8_t DIO_9 = 9; //   [PIN:13, PB1] IR_RECEIVE_PIN
 const static uint8_t DIO_10 = 10; // [PIN:14, PB2] LC_LCD_RS
 const static uint8_t DIO_11 = 11; // [PIN:15, PB3] LC_LCD_E
@@ -69,11 +69,9 @@ const static uint8_t BT_REP_PRESS_MS = 200;
 const static uint8_t YT_STATE_CHANGE_MS = 100;
 const static uint8_t YT_TRIG_PIN = AIO_4;
 
-// ######## SpeakerRelay(SR) ########
-const static uint8_t SR_RELAY_PIN = DIO_8;
-
-// ######## SubRelay(SU) ########
-const static uint8_t SU_RELAY_PIN = DIO_6;
+// ######## Relay(RE) ########
+const static uint8_t RE_SUB_PIN = DIO_6;
+const static uint8_t RE_SPK_PIN = DIO_8;
 
 // ######## IrReceiver(IR) ########
 const static uint8_t IR_RECEIVE_PIN = DIO_9;

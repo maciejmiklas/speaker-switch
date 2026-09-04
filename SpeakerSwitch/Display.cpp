@@ -149,8 +149,8 @@ void Display::onCycle() {
 void Display::setup() {
   dispRef = this;
 
-  eb_reg(BusEvent::SPEAKER_TO_YAMAHA, &disp_onSpeakerToYamaha);
-  eb_reg(BusEvent::SPEAKER_TO_CAMBRIDGE, &disp_onSpeakerToCambridge);
+  eb_reg(BusEvent::ALL_SPK_TO_YAMAHA, &disp_onSpeakerToYamaha);
+  eb_reg(BusEvent::ALL_SPK_TO_CAMBRIDGE, &disp_onSpeakerToCambridge);
   eb_reg(BusEvent::SUB_TO_YAMAHA, &disp_onSubToYamaha);
   eb_reg(BusEvent::SUB_TO_CAMBRIDGE, &disp_onSubToCambridge);
   eb_reg(BusEvent::CYCLE, &disp_onCycle);

@@ -18,9 +18,10 @@
 
 static constexpr const char* NAME = "EB";
 
-static const uint8_t LISTNERS_MAX = 20;
 static const uint8_t EVENTS_SIZE = static_cast<uint8_t>(BusEvent::COUNT);
-static void((*BUS_LIST_FN[EVENTS_SIZE][LISTNERS_MAX])(va_list));
+
+static const uint8_t LISTNERS_MAX = 20;
+static void (*BUS_LIST_FN[EVENTS_SIZE][LISTNERS_MAX])(va_list);
 static uint8_t BUS_LIST_FN_SIZE[EVENTS_SIZE] = { 0 };
 
 uint8_t eb_getFnIdx(BusEvent event) {

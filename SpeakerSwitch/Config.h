@@ -19,8 +19,8 @@
 
 #include <Arduino.h>
 
-static constexpr const char* APP_NAME = " Speaker Switch ";
-static constexpr const char* VERSION =  "     v2.00      ";
+static constexpr const char *APP_NAME = " Speaker Switch ";
+static constexpr const char *VERSION = "     v2.00      ";
 
 // ######## DIGITAL PINs ########
 const static uint8_t DIO_0 = 0; //   [PIN:30, PD0] Hardware Serial RX/TX
@@ -35,16 +35,14 @@ const static uint8_t DIO_8 = 8; //   [PIN:12, PB0] RE_SPK_PIN
 const static uint8_t DIO_9 = 9; //   [PIN:13, PB1] IR_RECEIVE_PIN
 const static uint8_t DIO_10 = 10; // [PIN:14, PB2] LC_LCD_RS
 const static uint8_t DIO_11 = 11; // [PIN:15, PB3] LC_LCD_E
-const static uint8_t DIO_12 = 12; // [PIN:16, PB4] 
-const static uint8_t DIO_13 = 13; // [PIN:17, PB5]
 
 // ######## ANALOG PINs ########
-const static uint8_t AIO_0 = A0; // LCD
+const static uint8_t AIO_0 = A0; // LCD BRIGHTNESS
 const static uint8_t AIO_1 = A1; // BT_PIN_OK
 const static uint8_t AIO_2 = A2; // BT_PIN_CANCEL
 const static uint8_t AIO_3 = A3; // BT_PIN_MENU
 const static uint8_t AIO_4 = A4; // YT_TRIG_PIN
-const static uint8_t AIO_5 = A5; 
+const static uint8_t AIO_5 = A5; // IR LED
 const static uint8_t AIO_6 = A6;
 const static uint8_t AIO_7 = A7;
 
@@ -81,8 +79,8 @@ const static uint16_t IR_STATE_CHANGE_MS = 1000;
 const static uint8_t LC_LCD_RS = DIO_10;
 const static uint8_t LC_LCD_E = DIO_11;
 
-const static uint8_t LC_LCD_D4 = DIO_5; 
-const static uint8_t LC_LCD_D5 = DIO_4; 
+const static uint8_t LC_LCD_D4 = DIO_5;
+const static uint8_t LC_LCD_D5 = DIO_4;
 const static uint8_t LC_LCD_D6 = DIO_3;
 const static uint8_t LC_LCD_D7 = DIO_2;
 

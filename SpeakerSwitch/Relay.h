@@ -25,23 +25,28 @@
 
 class Relay : public Device {
 public:
-  Relay();
+    Relay();
 
-  void onYamahaTriggerOn();
-  void onYamahaTriggerOff();
-  void onSubCmd();
+    void onYamahaTriggerOn();
 
-  // from Device.h
-  void setup();
+    void onYamahaTriggerOff();
+
+    void onSubCmd();
+
+    // from Device.h
+    void setup();
 
 private:
-  static constexpr const char* NAME = "RE";
-  bool subCambridge;
-  void spkToYamaha();
-  void spkToCambridge();
-  void subToYamaha();
-  void subToCambridge();
+    static constexpr const char *NAME = "RE";
+    bool subCambridge;
 
+    void spkToYamaha();
+
+    void spkToCambridge();
+
+    void subToYamaha();
+
+    void subToCambridge();
 };
 
 #endif  // SUB_RELAY_H

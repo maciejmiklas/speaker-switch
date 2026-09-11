@@ -25,20 +25,21 @@
 
 class YamahaTrigger : public Device {
 public:
-  YamahaTrigger();
+    YamahaTrigger();
 
-  void onCycle();
+    void onCycle();
 
-  // from Device.h
-  void setup();
+    // from Device.h
+    void setup();
 
-  void reinitialize();
+    void reinitialize();
 
 private:
-  static constexpr const char* NAME = "YT";
-  uint32_t lastChangeMs;
-  uint8_t currentTriggerLevel;
-  inline void sendEvent(uint8_t triggerLevel);
+    static constexpr const char *NAME = "YT";
+    uint32_t lastChangeMs;
+    uint8_t currentTriggerLevel;
+
+    inline void sendEvent(uint8_t triggerLevel);
 };
 
 #endif  // YAM_TRIGGER_H

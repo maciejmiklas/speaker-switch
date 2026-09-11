@@ -22,65 +22,65 @@
 
 /* To add new event: 1) Insert new enumaration into BusEvent 2) Increase #EVENTS_SIZE 3) Insert new enum into #BUS_LISTENERS */
 enum class BusEvent: uint8_t {
+    // #### Values are indexed! ####
+    CYCLE = 0,
 
-  // #### Values are indexed! ####
-  CYCLE = 0,
+    /* 12V yamaha trigger is on. */
+    YAMAHA_TRIGGER_ON, // 1
 
-  /* 12V yamaha trigger is on. */
-  YAMAHA_TRIGGER_ON, // 1
+    /* 12V yamaha trigger is off. */
+    YAMAHA_TRIGGER_OFF, // 2
 
-  /* 12V yamaha trigger is off. */
-  YAMAHA_TRIGGER_OFF, // 2
+    /* Button MENU pressed. */
+    BTN_MENU, // 3
 
-  /* Button MENU pressed. */
-  BTN_MENU, // 3
+    /* Button OK pressed. */
+    BTN_OK, // 4
 
-  /* Button OK pressed. */
-  BTN_OK, // 4
+    /* Button CANCEL pressed. */
+    BTN_CANCEL, // 5
 
-  /* Button CANCEL pressed. */
-  BTN_CANCEL, // 5
+    /* IR command to flip SUB. */
+    IR_SUB_CMD, // 6
 
-  /* IR command to flip SUB. */
-  IR_SUB_CMD, // 6
+    /* IR learn mode on for SUB. */
+    IR_SUB_LEARN, // 7
 
-  /* IR learn mode on for SUB. */
-  IR_SUB_LEARN, // 7
+    /* IR has learned value 1. */
+    IR_SUB_LEARNED_1, // 8
 
-  /* IR has learned value 1. */
-  IR_SUB_LEARNED_1, // 8
+    /* IR has learned value 1. */
+    IR_SUB_LEARNED_2, // 9
 
-  /* IR has learned value 1. */
-  IR_SUB_LEARNED_2, // 9
+    /* IR has learned both values */
+    IR_SUB_LEARNED_OK, // 10
 
-  /* IR has learned both values */
-  IR_SUB_LEARNED_OK, // 10
+    IR_SUB_SAVE, // 11
 
-  IR_SUB_SAVE, // 11
+    IR_SUB_CANCEL, // 12
 
-  IR_SUB_CANCEL, // 12
+    /* Speaker switched to Yamaha */
+    ALL_SPK_TO_YAMAHA, //13
 
-  /* Speaker switched to Yamaha */
-  ALL_SPK_TO_YAMAHA, //13
+    /* Speaker switched to Camridge */
+    ALL_SPK_TO_CAMBRIDGE, // 14
 
-  /* Speaker switched to Camridge */
-  ALL_SPK_TO_CAMBRIDGE, // 14
+    /* Sub switched to Yamaha */
+    SUB_TO_YAMAHA, // 15
 
-  /* Sub switched to Yamaha */
-  SUB_TO_YAMAHA, // 15
+    /* Sub switched to Camridge */
+    SUB_TO_CAMBRIDGE, // 16
 
-  /* Sub switched to Camridge */
-  SUB_TO_CAMBRIDGE, // 16
+    MENU_START, // 18
 
-  MENU_START,// 18
+    MENU_END, // 19
 
-  MENU_END,// 19
-
-  /* Number of elements in this enum. */
-  COUNT
+    /* Number of elements in this enum. */
+    COUNT
 };
 
 void eb_fire(BusEvent event, ...);
+
 void eb_reg(BusEvent event, void (*func)(va_list));
 
 #endif /* EVENTBUS_H_ */

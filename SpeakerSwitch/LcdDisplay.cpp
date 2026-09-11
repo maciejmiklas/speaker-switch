@@ -19,48 +19,45 @@
 
 static LiquidCrystal lcd(LC_LCD_RS, LC_LCD_E, LC_LCD_D4, LC_LCD_D5, LC_LCD_D6, LC_LCD_D7);
 
-LcdDisplay* lcdRef;
+static LcdDisplay *lcdRef;
 
 LcdDisplay::LcdDisplay() {
-
 }
 
 void LcdDisplay::print(uint8_t row, uint8_t col, uint8_t size, const char *fmt, ...) {
-	
-  lcd.setCursor(col, row);
+    lcd.setCursor(col, row);
 
-	char buf[size + 1];
-	va_list va;
-	va_start(va, fmt);
-	short chars = vsprintf(buf, fmt, va);
-	va_end(va);
+    char buf[size + 1];
+    va_list va;
+    va_start(va, fmt);
+    short chars = vsprintf(buf, fmt, va);
+    va_end(va);
 
-	cleanRight(buf, chars, size);
-	lcd.print(buf);
+    cleanRight(buf, chars, size);
+    lcd.print(buf);
 }
 
 void LcdDisplay::cleanRight(char *array, short from, short size) {
-  for (short int i = from; i < size; i++) {
-		array[i] = ' ';
-	}
-	array[size] = '\0';
+    for (short int i = from; i < size; i++) {
+        array[i] = ' ';
+    }
+    array[size] = '\0';
 }
 
 void LcdDisplay::clear(uint8_t row) {
-	
-	lcd.setCursor(0, row);
-	lcd.print("                ");
-	lcd.setCursor(0, row);
+    lcd.setCursor(0, row);
+    lcd.print("                ");
+    lcd.setCursor(0, row);
 }
 
 
 // https://docs.arduino.cc/learn/electronics/lcd-displays/
 void LcdDisplay::setup() {
-  lcdRef = this;
+    lcdRef = this;
 
-	pinMode(LC_LCD_K, OUTPUT);
-	digitalWrite(LC_LCD_K, HIGH); 
+    pinMode(LC_LCD_K, OUTPUT);
+    digitalWrite(LC_LCD_K, HIGH);
 
-  lcd.begin(16, 2);
-  lcd.noAutoscroll();
+    lcd.begin(16, 2);
+    lcd.noAutoscroll();
 };

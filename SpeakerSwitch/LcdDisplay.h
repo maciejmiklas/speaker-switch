@@ -25,15 +25,17 @@
 
 class LcdDisplay : public Device {
 public:
-  LcdDisplay();
+    LcdDisplay();
 
-  void setup(); // from Device.h
-  void clear(uint8_t row);
-  void print(uint8_t row, uint8_t col, uint8_t size, const char *fmt, ...);
+    void setup(); // from Device.h
+    void clear(uint8_t row);
+
+    void print(uint8_t row, uint8_t col, uint8_t size, const char *fmt, ...);
 
 private:
-  static constexpr const char* NAME = "LC";
-  void cleanRight(char *array, short from, short size);
+    static constexpr const char *NAME = "LC";
+
+    void cleanRight(char *array, short from, short size);
 };
 
 #endif  // LCD_DISPLAY_H

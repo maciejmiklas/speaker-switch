@@ -21,10 +21,8 @@
 
 class Device {
 public:
-
-  /** Called only once after hard reset */
-  virtual void setup() = 0;
-
+    /** Called only once after hard reset */
+    virtual void setup() = 0;
 };
 
 #endif /* DEVICE_H_ */

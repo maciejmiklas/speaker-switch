@@ -25,35 +25,46 @@
 
 class Display : public Device {
 public:
-  Display(LcdDisplay* lcd);
+    Display(LcdDisplay *lcd);
 
-  void onCycle();
-  void onSubToYamaha();
-  void onSubToCambridge();
-  void onSpeakerToYamaha();
-  void onSpeakerToCambridge();
-  void onYamahaTriggerOn();
-  void onYamahaTriggerOff();
-  void onRemoteInput();
-  void onMenuStart();
-  void onMenuEnd();
+    void onCycle();
 
-  // from Device.h
-  void setup();
+    void onSubToYamaha();
+
+    void onSubToCambridge();
+
+    void onSpeakerToYamaha();
+
+    void onSpeakerToCambridge();
+
+    void onYamahaTriggerOn();
+
+    void onYamahaTriggerOff();
+
+    void onRemoteInput();
+
+    void onMenuStart();
+
+    void onMenuEnd();
+
+    // from Device.h
+    void setup();
 
 private:
-  static constexpr const char* NAME = "DS";
-  static constexpr const uint16_t INFO_TRIGGER_OFF = 65000;
+    static constexpr const char *NAME = "DS";
+    static constexpr const uint16_t INFO_TRIGGER_OFF = 65000;
 
-  bool speakerToCambridge;
-  bool subToCambridge;
-  bool autoUpdateEnabled;
-  uint16_t infoDisplayMs;
-  LcdDisplay* lcd;
+    bool speakerToCambridge;
+    bool subToCambridge;
+    bool autoUpdateEnabled;
+    uint16_t infoDisplayMs;
+    LcdDisplay *lcd;
 
-  void printSpeakersAssigment();
-  void resetInfoDisplay();
-  bool autoUpdateOn();
+    void printSpeakersAssigment();
+
+    void resetInfoDisplay();
+
+    bool autoUpdateOn();
 };
 
 #endif  // DISPLAY_H

@@ -25,22 +25,24 @@
 
 class Buttons : public Device {
 public:
-  Buttons();
+    Buttons();
 
-  void onCycle();
+    void onCycle();
 
-  // from Device.h
-  void setup();
+    // from Device.h
+    void setup();
 
 private:
-  static constexpr const char* NAME = "BT";
-  uint32_t processMs;
-  uint32_t repeatMs;
-  uint8_t lastButton;
+    static constexpr const char *NAME = "BT";
+    uint32_t processMs;
+    uint32_t repeatMs;
+    uint8_t lastButton;
 
-  void setupButton(uint8_t pin);
-  void readButtons();
-  bool canProcess(uint8_t pin);
+    void setupButton(uint8_t pin);
+
+    void readButtons();
+
+    bool canProcess(uint8_t pin);
 };
 
 #endif  // BUTTONS_H

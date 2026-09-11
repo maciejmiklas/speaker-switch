@@ -17,86 +17,85 @@
  */
 #include "Relay.h"
 
-Relay* relayRef;
+static Relay *relayRef;
 
-Relay::Relay(): subCambridge(true) {
-
+Relay::Relay() : subCambridge(true) {
 }
 
 void re_onYamahaTriggerOn(va_list ap) {
-  relayRef->onYamahaTriggerOn();
+    relayRef->onYamahaTriggerOn();
 }
 
 void re_onYamahaTriggerOff(va_list ap) {
-  relayRef->onYamahaTriggerOff();
+    relayRef->onYamahaTriggerOff();
 }
 
 void re_onSubCmd(va_list ap) {
-  relayRef->onSubCmd();
+    relayRef->onSubCmd();
 }
 
 void Relay::onYamahaTriggerOn() {
-  subCambridge = false;
+    subCambridge = false;
 
-  #if LOG && LOG_RE
+#if LOG && LOG_RE
     log(F("%s YAM ON"), NAME);
-  #endif
-  eb_fire(BusEvent::ALL_SPK_TO_YAMAHA);
-  spkToYamaha();
-  subToYamaha();
+#endif
+    eb_fire(BusEvent::ALL_SPK_TO_YAMAHA);
+    spkToYamaha();
+    subToYamaha();
 }
 
 void Relay::onYamahaTriggerOff() {
-  subCambridge = true;
+    subCambridge = true;
 
-  #if LOG && LOG_RE
+#if LOG && LOG_RE
     log(F("%s CAMB ON"), NAME);
-  #endif
-  eb_fire(BusEvent::ALL_SPK_TO_CAMBRIDGE);
-  spkToCambridge();
-  subToCambridge();
+#endif
+    eb_fire(BusEvent::ALL_SPK_TO_CAMBRIDGE);
+    spkToCambridge();
+    subToCambridge();
 }
 
 void Relay::onSubCmd() {
-  subCambridge = !subCambridge;
-  if(subCambridge) {
-    #if LOG && LOG_RE
-      log(F("%s SUB YAM"), NAME);
-    #endif
-    eb_fire(BusEvent::SUB_TO_CAMBRIDGE);
-    subToYamaha();
-  } else {
-    #if LOG && LOG_RE
-      log(F("%s SUB CAMB"), NAME);
-    #endif
-    eb_fire(BusEvent::SUB_TO_YAMAHA);
-    subToCambridge();
-  }
+    subCambridge = !subCambridge;
+    if (subCambridge) {
+#if LOG && LOG_RE
+        log(F("%s SUB YAM"), NAME);
+#endif
+        eb_fire(BusEvent::SUB_TO_CAMBRIDGE);
+        subToYamaha();
+    } else {
+#if LOG && LOG_RE
+        log(F("%s SUB CAMB"), NAME);
+#endif
+        eb_fire(BusEvent::SUB_TO_YAMAHA);
+        subToCambridge();
+    }
 }
 
 inline void Relay::spkToYamaha() {
-  digitalWrite(RE_SPK_PIN, LOW); 
+    digitalWrite(RE_SPK_PIN, LOW);
 }
 
 inline void Relay::spkToCambridge() {
-  digitalWrite(RE_SPK_PIN, HIGH); 
+    digitalWrite(RE_SPK_PIN, HIGH);
 }
 
 inline void Relay::subToYamaha() {
-  digitalWrite(RE_SUB_PIN, LOW);
+    digitalWrite(RE_SUB_PIN, LOW);
 }
 
 inline void Relay::subToCambridge() {
-  digitalWrite(RE_SUB_PIN, HIGH); 
+    digitalWrite(RE_SUB_PIN, HIGH);
 }
 
 void Relay::setup() {
-  relayRef = this;
+    relayRef = this;
 
-  pinMode(RE_SUB_PIN, OUTPUT);
-  pinMode(RE_SPK_PIN, OUTPUT);
+    pinMode(RE_SUB_PIN, OUTPUT);
+    pinMode(RE_SPK_PIN, OUTPUT);
 
-  eb_reg(BusEvent::YAMAHA_TRIGGER_ON, &re_onYamahaTriggerOn);
-  eb_reg(BusEvent::YAMAHA_TRIGGER_OFF, &re_onYamahaTriggerOff);
-  eb_reg(BusEvent::IR_SUB_CMD, &re_onSubCmd);
+    eb_reg(BusEvent::YAMAHA_TRIGGER_ON, &re_onYamahaTriggerOn);
+    eb_reg(BusEvent::YAMAHA_TRIGGER_OFF, &re_onYamahaTriggerOff);
+    eb_reg(BusEvent::IR_SUB_CMD, &re_onSubCmd);
 }

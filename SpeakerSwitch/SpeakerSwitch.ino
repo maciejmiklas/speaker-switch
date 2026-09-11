@@ -24,43 +24,42 @@
 #include "LcdDisplay.h"
 #include "Display.h"
 
-Buttons* btn = new Buttons();
-Relay* re = new Relay();
-IrSubReceiver* irs = new IrSubReceiver();
-LcdDisplay* lcd = new LcdDisplay();
-YamahaTrigger* yt = new YamahaTrigger();
-Display* disp = new Display(lcd);
+Buttons *btn = new Buttons();
+Relay *re = new Relay();
+IrSubReceiver *irs = new IrSubReceiver();
+LcdDisplay *lcd = new LcdDisplay();
+YamahaTrigger *yt = new YamahaTrigger();
+Display *disp = new Display(lcd);
 
 const static uint8_t DEVICES = 6;
-Device* dev[DEVICES] = { btn,  re, irs, lcd, yt, disp };
+Device *dev[DEVICES] = {btn, re, irs, lcd, yt, disp};
 
 void setup() {
-
-  #if LOG
+#if LOG
     log_setup();
-  #endif
+#endif
 
-  #if LOG && LOG_SW
+#if LOG && LOG_SW
     log(F("\n\n### SETUP ###"));
-  #endif
+#endif
 
-  util_cycle();
-  execSetup();
+    util_cycle();
+    execSetup();
 
-  yt->reinitialize();
+    yt->reinitialize();
 }
 
 void loop() {
- // #if LOG && LOG_SW
-  //  log(F("### LOOP ###"));
- // #endif
+    // #if LOG && LOG_SW
+    //  log(F("### LOOP ###"));
+    // #endif
 
-  util_cycle();
-  eb_fire(BusEvent::CYCLE);
+    util_cycle();
+    eb_fire(BusEvent::CYCLE);
 }
 
 void execSetup() {
-  for (uint8_t i = 0; i < DEVICES; i++) {
-    dev[i]->setup();
-  }
+    for (uint8_t i = 0; i < DEVICES; i++) {
+        dev[i]->setup();
+    }
 }

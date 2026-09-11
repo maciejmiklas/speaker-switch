@@ -17,116 +17,107 @@
 #include "IrSubReceiver.h"
 #include <IRremote.hpp>
 
-IrSubReceiver* irRef;
+static IrSubReceiver *irRef;
 
-IrSubReceiver::IrSubReceiver(): lastChangeMs(0), irSignal1(5689), irSignal2(7737), lerning(false), irLernSignal1(0), irLernSignal2(0) {
-
+IrSubReceiver::IrSubReceiver() : lastChangeMs(0), irSignal1(5689), irSignal2(7737), lerning(false), irLernSignal1(0),
+                                 irLernSignal2(0) {
 }
 
 void ir_lern(va_list ap) {
-  irRef->onLearn();
+    irRef->onLearn();
 }
 
 void ir_onCycle(va_list ap) {
-  irRef->onCycle();
+    irRef->onCycle();
 }
 
 void ir_onSave(va_list ap) {
-  irRef->onSave();
+    irRef->onSave();
 }
 
 void ir_onCancel(va_list ap) {
-  irRef->onCancel();
+    irRef->onCancel();
 }
 
 void IrSubReceiver::onLearn() {
-  irLernSignal1 = 0;
-  irLernSignal2 = 0;
-  lerning = true;
+    irLernSignal1 = 0;
+    irLernSignal2 = 0;
+    lerning = true;
 }
 
 void IrSubReceiver::learn() {
+    uint32_t irin = IrReceiver.decodedIRData.decodedRawData;
 
-  uint32_t irin = IrReceiver.decodedIRData.decodedRawData;
+    if (irLernSignal1 == 0) {
+        irLernSignal1 = irin;
+#if LOG && LOG_IR
+        log(F("%s S1:%d"), NAME, irin);
+#endif
+        eb_fire(BusEvent::IR_SUB_LEARNED_1, irin);
+    } else if (irLernSignal2 == 0 && irin != irLernSignal1) {
+        irLernSignal2 = irin;
+#if LOG && LOG_IR
+        log(F("%s S2:%d"), NAME, irin);
+#endif
+        eb_fire(BusEvent::IR_SUB_LEARNED_2, irin);
+    }
 
-  if(irLernSignal1 == 0) {
-    irLernSignal1 = irin;
-    #if LOG && LOG_IR
-      log(F("%s S1:%d"), NAME, irin);
-    #endif
-    eb_fire(BusEvent::IR_SUB_LEARNED_1, irin);
-
-  } else if(irLernSignal2 == 0 && irin != irLernSignal1) {
-    irLernSignal2 = irin;
-    #if LOG && LOG_IR
-      log(F("%s S2:%d"), NAME, irin);
-    #endif
-    eb_fire(BusEvent::IR_SUB_LEARNED_2, irin);
-  }
-
-  if(irLernSignal1 != 0 && irLernSignal2 != 0) {
-    eb_fire(BusEvent::IR_SUB_LEARNED_OK);
-    lerning = false;
-  }
-  
+    if (irLernSignal1 != 0 && irLernSignal2 != 0) {
+        eb_fire(BusEvent::IR_SUB_LEARNED_OK);
+        lerning = false;
+    }
 }
 
 void IrSubReceiver::onCancel() {
-
-  irLernSignal1 = 0;
-  irLernSignal2 = 0;
-  lerning = false;
+    irLernSignal1 = 0;
+    irLernSignal2 = 0;
+    lerning = false;
 }
 
 void IrSubReceiver::onSave() {
+    irSignal1 = irLernSignal1;
+    irSignal2 = irLernSignal2;
 
-  irSignal1 = irLernSignal1;
-  irSignal2 = irLernSignal2;
-
-  irLernSignal1 = 0;
-  irLernSignal2 = 0;
-  lerning = false;
+    irLernSignal1 = 0;
+    irLernSignal2 = 0;
+    lerning = false;
 }
 
 void IrSubReceiver::processIr() {
+    if (util_ms() - lastChangeMs < IR_STATE_CHANGE_MS) {
+        return;
+    }
 
-  if (util_ms() - lastChangeMs < IR_STATE_CHANGE_MS) {
-    return;
-  }
-
-  lastChangeMs = util_ms();
-  uint32_t irin = IrReceiver.decodedIRData.decodedRawData;
-  if(irin == irSignal1 || irin == irSignal2) {
-    #if LOG && LOG_IR
-      log(F("%s CMD:%d"), NAME, irin);
-    #endif
-    eb_fire(BusEvent::IR_SUB_CMD);
-  }
-
+    lastChangeMs = util_ms();
+    uint32_t irin = IrReceiver.decodedIRData.decodedRawData;
+    if (irin == irSignal1 || irin == irSignal2) {
+#if LOG && LOG_IR
+        log(F("%s CMD:%d"), NAME, irin);
+#endif
+        eb_fire(BusEvent::IR_SUB_CMD);
+    }
 }
 
 void IrSubReceiver::onCycle() {
-  
-  if (!IrReceiver.decode()) {
-    return;
-  }
+    if (!IrReceiver.decode()) {
+        return;
+    }
 
-  if(lerning) {
-    learn();
+    if (lerning) {
+        learn();
+    } else {
+        processIr();
+    }
 
-  } else {
-    processIr();
-  }
-
-  IrReceiver.resume();
+    IrReceiver.resume();
 }
 
 void IrSubReceiver::setup() {
-  irRef = this;
-  IrReceiver.begin(IR_RECEIVE_PIN, ENABLE_LED_FEEDBACK);
+    irRef = this;
+    IrReceiver.begin(IR_RECEIVE_PIN, ENABLE_LED_FEEDBACK);
 
-  eb_reg(BusEvent::CYCLE, &ir_onCycle);
-  eb_reg(BusEvent::IR_SUB_LEARN, &ir_lern);
-  eb_reg(BusEvent::IR_SUB_SAVE, &ir_onSave);
-  eb_reg(BusEvent::IR_SUB_CANCEL, &ir_onCancel);
+    eb_reg(BusEvent::CYCLE, &ir_onCycle);
+    eb_reg(BusEvent::IR_SUB_LEARN, &ir_lern);
+    eb_reg(BusEvent::IR_SUB_SAVE, &ir_onSave);
+    eb_reg(BusEvent::IR_SUB_CANCEL, &ir_onCancel);
 }

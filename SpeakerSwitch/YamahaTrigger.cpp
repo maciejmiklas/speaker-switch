@@ -17,54 +17,53 @@
  */
 #include "YamahaTrigger.h"
 
-YamahaTrigger* refAt;
+static YamahaTrigger *refAt;
 
-YamahaTrigger::YamahaTrigger(): currentTriggerLevel(LOW), lastChangeMs(0) {
-
+YamahaTrigger::YamahaTrigger() : currentTriggerLevel(LOW), lastChangeMs(0) {
 }
 
 void at_onCycle(va_list ap) {
-  refAt->onCycle();
+    refAt->onCycle();
 }
 
 void YamahaTrigger::onCycle() {
-  uint8_t triggerLevel = digitalRead(YT_TRIG_PIN);
+    uint8_t triggerLevel = digitalRead(YT_TRIG_PIN);
 
-  if(triggerLevel == currentTriggerLevel) {
+    if (triggerLevel == currentTriggerLevel) {
+        lastChangeMs = 0;
+        return;
+    }
+
+    if (lastChangeMs == 0) {
+        lastChangeMs = util_ms();
+        return;
+    }
+
+    if (util_ms() - lastChangeMs < YT_STATE_CHANGE_MS) {
+        return;
+    }
+
+    currentTriggerLevel = triggerLevel;
     lastChangeMs = 0;
-    return;
-  }
 
-  if(lastChangeMs == 0) {
-    lastChangeMs = util_ms();
-    return;
-  }
-
-  if(util_ms() - lastChangeMs < YT_STATE_CHANGE_MS) {
-    return;
-  }
-
-  currentTriggerLevel = triggerLevel;
-  lastChangeMs = 0;
-
-  sendEvent(triggerLevel);
+    sendEvent(triggerLevel);
 }
 
 void inline YamahaTrigger::sendEvent(uint8_t triggerLevel) {
-  #if LOG && LOG_YT
+#if LOG && LOG_YT
     log(F("%s AMP %d"), NAME, triggerLevel);
-  #endif
-  eb_fire(triggerLevel == HIGH ? BusEvent::YAMAHA_TRIGGER_ON:BusEvent::YAMAHA_TRIGGER_OFF);
+#endif
+    eb_fire(triggerLevel == HIGH ? BusEvent::YAMAHA_TRIGGER_ON : BusEvent::YAMAHA_TRIGGER_OFF);
 }
 
 void YamahaTrigger::reinitialize() {
-  uint8_t triggerLevel = currentTriggerLevel = digitalRead(YT_TRIG_PIN);
-  sendEvent(triggerLevel);
+    uint8_t triggerLevel = currentTriggerLevel = digitalRead(YT_TRIG_PIN);
+    sendEvent(triggerLevel);
 }
 
 void YamahaTrigger::setup() {
-  pinMode(YT_TRIG_PIN, INPUT);
-  refAt = this;
+    pinMode(YT_TRIG_PIN, INPUT);
+    refAt = this;
 
-  eb_reg(BusEvent::CYCLE, &at_onCycle);
+    eb_reg(BusEvent::CYCLE, &at_onCycle);
 }

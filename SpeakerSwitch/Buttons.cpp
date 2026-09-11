@@ -17,79 +17,75 @@
 
 #include "Buttons.h"
 
-Buttons* refButtons;
+static Buttons *refButtons;
 
 void buttons_onCycle(va_list ap) {
-  refButtons->onCycle();
+    refButtons->onCycle();
 }
 
 Buttons::Buttons()
-  : processMs(0), repeatMs(0), lastButton(0) {
+    : processMs(0), repeatMs(0), lastButton(0) {
 }
 
 void Buttons::setup() {
-  setupButton(BT_PIN_MENU);
-  setupButton(BT_PIN_OK);
-  setupButton(BT_PIN_CANCEL);
+    setupButton(BT_PIN_MENU);
+    setupButton(BT_PIN_OK);
+    setupButton(BT_PIN_CANCEL);
 
-  refButtons = this;
-  eb_reg(BusEvent::CYCLE, &buttons_onCycle);
+    refButtons = this;
+    eb_reg(BusEvent::CYCLE, &buttons_onCycle);
 }
 
 void Buttons::onCycle() {
-  if (util_ms() - processMs < BT_PRESS_MS) {
-    return;
-  }
-  readButtons();
-  processMs = util_ms();
+    if (util_ms() - processMs < BT_PRESS_MS) {
+        return;
+    }
+    readButtons();
+    processMs = util_ms();
 }
 
 bool Buttons::canProcess(uint8_t pin) {
-  if (digitalRead(pin) != LOW){
-    return false;
-  }
-
-  if(lastButton == pin) {
-    if (util_ms() - repeatMs < BT_REP_PRESS_MS) {
-      return false;
-    } else {
-      lastButton = 0;
-      repeatMs = 0;
+    if (digitalRead(pin) != LOW) {
+        return false;
     }
-  } else {
-    lastButton = pin;
-    repeatMs = util_ms();
-  }
 
-  return true;
+    if (lastButton == pin) {
+        if (util_ms() - repeatMs < BT_REP_PRESS_MS) {
+            return false;
+        } else {
+            lastButton = 0;
+            repeatMs = 0;
+        }
+    } else {
+        lastButton = pin;
+        repeatMs = util_ms();
+    }
+
+    return true;
 }
 
 void Buttons::readButtons() {
-  
-  uint8_t pin = LC_LCD_E;
+    uint8_t pin = LC_LCD_E;
 
-  if (canProcess(BT_PIN_MENU)) {
-    #if LOG && LOG_BT
-      log(F("%s MENU"), NAME);
-    #endif
-    eb_fire(BusEvent::BTN_MENU);
-
-  } else if (canProcess(BT_PIN_OK)) {
-    #if LOG && LOG_BT
-      log(F("%s OK"), NAME);
-    #endif
-    eb_fire(BusEvent::BTN_OK);
-
-  } else if (canProcess(BT_PIN_CANCEL)) {
-    #if LOG && LOG_BT
-      log(F("%s CANCEL"), NAME);
-    #endif
-    eb_fire(BusEvent::BTN_CANCEL);
-
-  }
+    if (canProcess(BT_PIN_MENU)) {
+#if LOG && LOG_BT
+        log(F("%s MENU"), NAME);
+#endif
+        eb_fire(BusEvent::BTN_MENU);
+    } else if (canProcess(BT_PIN_OK)) {
+#if LOG && LOG_BT
+        log(F("%s OK"), NAME);
+#endif
+        eb_fire(BusEvent::BTN_OK);
+    } else if (canProcess(BT_PIN_CANCEL)) {
+#if LOG && LOG_BT
+        log(F("%s CANCEL"), NAME);
+#endif
+        eb_fire(BusEvent::BTN_CANCEL);
+    }
 }
 
 void Buttons::setupButton(uint8_t pin) {
-  pinMode(pin, INPUT);
-  pinMode(pin, INPUT_PULLUP);
+    pinMode(pin, INPUT);
+    pinMode(pin, INPUT_PULLUP);
 }

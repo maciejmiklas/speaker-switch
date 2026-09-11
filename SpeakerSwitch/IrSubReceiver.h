@@ -24,25 +24,30 @@
 
 class IrSubReceiver : public Device {
 public:
-  IrSubReceiver();
+    IrSubReceiver();
 
-  void setup();   // from Device.h
+    void setup(); // from Device.h
 
-  void onCycle();
-  void onLearn();
-  void onSave();
-  void onCancel();
+    void onCycle();
+
+    void onLearn();
+
+    void onSave();
+
+    void onCancel();
 
 private:
-  static constexpr const char* NAME = "IT";
-  uint32_t lastChangeMs;
-  uint32_t irSignal1;
-  uint32_t irSignal2;
-  uint32_t irLernSignal1;
-  uint32_t irLernSignal2;
-  bool lerning;
-  void learn();
-  void processIr();
+    static constexpr const char *NAME = "IT";
+    uint32_t lastChangeMs;
+    uint32_t irSignal1;
+    uint32_t irSignal2;
+    uint32_t irLernSignal1;
+    uint32_t irLernSignal2;
+    bool lerning;
+
+    void learn();
+
+    void processIr();
 };
 
 #endif  // IR_SUB_RECEIVER_H

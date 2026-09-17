@@ -24,15 +24,17 @@
 #include "LcdDisplay.h"
 #include "Display.h"
 
-Buttons *btn = new Buttons();
-Relay *re = new Relay();
-IrSubReceiver *irs = new IrSubReceiver();
-LcdDisplay *lcd = new LcdDisplay();
-YamahaTrigger *yt = new YamahaTrigger();
-Display *disp = new Display(lcd);
+static Buttons *btn = new Buttons();
+static Relay *re = new Relay();
+static IrSubReceiver *irs = new IrSubReceiver();
+static LcdDisplay *lcd = new LcdDisplay();
+static YamahaTrigger *yt = new YamahaTrigger();
+static Display *disp = new Display(lcd);
 
-const static uint8_t DEVICES = 6;
-Device *dev[DEVICES] = {btn, re, irs, lcd, yt, disp};
+static constexpr uint8_t DEVICES = 6;
+static Device *dev[DEVICES] = {btn, re, irs, lcd, yt, disp};
+
+static void execSetup();
 
 void setup() {
 #if LOG

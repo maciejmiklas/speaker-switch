@@ -27,7 +27,7 @@ static void (*BUS_LIST_FN[EVENTS_SIZE][LISTNERS_MAX])(va_list);
 
 static uint8_t BUS_LIST_FN_SIZE[EVENTS_SIZE] = {0};
 
-uint8_t eb_getFnIdx(BusEvent event) {
+static uint8_t eb_getFnIdx(BusEvent event) {
     return static_cast<int>(event);
 }
 
@@ -42,7 +42,7 @@ void eb_reg(BusEvent event, void ((*fn)(va_list))) {
     }
     BUS_LIST_FN[enentIdx][fnIdx] = fn;
 #if LOG && LOG_EB
-    log(F("%s REG %d=%d"), NAME, event, fnIdx);
+    log(F("%s REG %d=%d"), NAME, static_cast<int>(event), fnIdx);
 #endif
 }
 

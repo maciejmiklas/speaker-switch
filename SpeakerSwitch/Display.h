@@ -33,10 +33,6 @@ public:
 
     void onSubToCambridge();
 
-    void onSpeakerToYamaha();
-
-    void onSpeakerToCambridge();
-
     void onYamahaTriggerOn();
 
     void onYamahaTriggerOff();
@@ -48,23 +44,21 @@ public:
     void onMenuEnd();
 
     // from Device.h
-    void setup();
+    void setup() override;
 
 private:
     static constexpr const char *NAME = "DS";
-    static constexpr const uint16_t INFO_TRIGGER_OFF = 65000;
+    static constexpr uint16_t INFO_TRIGGER_OFF = 0;
 
     bool speakerToCambridge;
     bool subToCambridge;
     bool autoUpdateEnabled;
-    uint16_t infoDisplayMs;
+    volatile uint32_t infoDisplayMs;
     LcdDisplay *lcd;
 
-    void printSpeakersAssigment();
+    void printSpeakersAssigment() const;
 
     void resetInfoDisplay();
-
-    bool autoUpdateOn();
 };
 
 #endif  // DISPLAY_H

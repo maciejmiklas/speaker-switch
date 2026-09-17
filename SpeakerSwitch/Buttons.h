@@ -30,7 +30,7 @@ public:
     void onCycle();
 
     // from Device.h
-    void setup();
+    void setup() override;
 
 private:
     static constexpr const char *NAME = "BT";
@@ -38,7 +38,7 @@ private:
     uint32_t repeatMs;
     uint8_t lastButton;
 
-    void setupButton(uint8_t pin);
+    static void setupButton(uint8_t pin);
 
     void readButtons();
 

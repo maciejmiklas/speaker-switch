@@ -19,7 +19,7 @@
 
 static Buttons *refButtons;
 
-void buttons_onCycle(va_list ap) {
+static void buttons_onCycle(va_list ap) {
     refButtons->onCycle();
 }
 

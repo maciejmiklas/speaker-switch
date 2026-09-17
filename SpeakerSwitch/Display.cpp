@@ -18,46 +18,39 @@
 
 static Display *dispRef;
 
-Display::Display(LcdDisplay *lcd) : lcd(lcd), infoDisplayMs(DS_INFO_DELAY_MS), autoUpdateEnabled(true) {
+Display::Display(LcdDisplay *lcd) : speakerToCambridge(false), subToCambridge(false), autoUpdateEnabled(true),
+                                    infoDisplayMs(INFO_TRIGGER_OFF), lcd(lcd) {
 }
 
-void disp_onRemoteInput(va_list ap) {
+static void disp_onRemoteInput(va_list ap) {
     dispRef->onRemoteInput();
 }
 
-void disp_onYamahaTriggerOn(va_list ap) {
+static void disp_onYamahaTriggerOn(va_list ap) {
     dispRef->onYamahaTriggerOn();
 }
 
-void disp_onYamahaTriggerOff(va_list ap) {
+static void disp_onYamahaTriggerOff(va_list ap) {
     dispRef->onYamahaTriggerOff();
 }
 
-void disp_onMenuStart(va_list ap) {
+static void disp_onMenuStart(va_list ap) {
     dispRef->onMenuStart();
 }
 
-void disp_onMenuEnd(va_list ap) {
+static void disp_onMenuEnd(va_list ap) {
     dispRef->onMenuEnd();
 }
 
-void disp_onSpeakerToYamaha(va_list ap) {
-    dispRef->onSpeakerToYamaha();
-}
-
-void disp_onSpeakerToCambridge(va_list ap) {
-    dispRef->onSpeakerToCambridge();
-}
-
-void disp_onSubToYamaha(va_list ap) {
+static void disp_onSubToYamaha(va_list ap) {
     dispRef->onSubToYamaha();
 }
 
-void disp_onSubToCambridge(va_list ap) {
+static void disp_onSubToCambridge(va_list ap) {
     dispRef->onSubToCambridge();
 }
 
-void disp_onCycle(va_list ap) {
+static void disp_onCycle(va_list ap) {
     dispRef->onCycle();
 }
 
@@ -69,24 +62,20 @@ void Display::onSubToCambridge() {
     subToCambridge = true;
 }
 
-void Display::onSpeakerToYamaha() {
-    speakerToCambridge = false;
-}
-
-void Display::onSpeakerToCambridge() {
-    speakerToCambridge = true;
-}
-
 void Display::onYamahaTriggerOn() {
-    if (autoUpdateOn()) {
+    speakerToCambridge = false;
+    subToCambridge = false;
+    if (autoUpdateEnabled) {
         lcd->print(0, 0, 16, "YAMAHA 12V TRIG.");
-        lcd->print(1, 0, 16, "       ON        ");
+        lcd->print(1, 0, 16, "       ON       ");
         resetInfoDisplay();
     }
 }
 
 void Display::onYamahaTriggerOff() {
-    if (autoUpdateOn()) {
+    speakerToCambridge = true;
+    subToCambridge = true;
+    if (autoUpdateEnabled) {
         lcd->print(0, 0, 16, "YAMAHA 12V TRIG.");
         lcd->print(1, 0, 16, "       OFF      ");
         resetInfoDisplay();
@@ -94,7 +83,7 @@ void Display::onYamahaTriggerOff() {
 }
 
 void Display::onRemoteInput() {
-    if (autoUpdateOn()) {
+    if (autoUpdateEnabled) {
         lcd->print(0, 0, 16, "REMOTE CONTROL  ");
         lcd->print(1, 0, 16, "SIGNAL RECEIVED ");
         resetInfoDisplay();
@@ -114,11 +103,7 @@ void Display::resetInfoDisplay() {
     infoDisplayMs = util_ms() + DS_INFO_DELAY_MS;
 }
 
-bool Display::autoUpdateOn() {
-    return autoUpdateEnabled && infoDisplayMs == INFO_TRIGGER_OFF;
-}
-
-void Display::printSpeakersAssigment() {
+void Display::printSpeakersAssigment() const {
     // row 0
     lcd->print(0, 0, 16, "SPK: "); // pos: 5
     if (speakerToCambridge) {
@@ -146,8 +131,6 @@ void Display::onCycle() {
 void Display::setup() {
     dispRef = this;
 
-    eb_reg(BusEvent::ALL_SPK_TO_YAMAHA, &disp_onSpeakerToYamaha);
-    eb_reg(BusEvent::ALL_SPK_TO_CAMBRIDGE, &disp_onSpeakerToCambridge);
     eb_reg(BusEvent::SUB_TO_YAMAHA, &disp_onSubToYamaha);
     eb_reg(BusEvent::SUB_TO_CAMBRIDGE, &disp_onSubToCambridge);
     eb_reg(BusEvent::CYCLE, &disp_onCycle);

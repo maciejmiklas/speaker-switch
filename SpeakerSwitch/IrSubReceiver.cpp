@@ -23,19 +23,19 @@ IrSubReceiver::IrSubReceiver() : lastChangeMs(0), irSignal1(5689), irSignal2(773
                                  irLernSignal2(0) {
 }
 
-void ir_lern(va_list ap) {
+static void ir_lern(va_list ap) {
     irRef->onLearn();
 }
 
-void ir_onCycle(va_list ap) {
+static void ir_onCycle(va_list ap) {
     irRef->onCycle();
 }
 
-void ir_onSave(va_list ap) {
+static void ir_onSave(va_list ap) {
     irRef->onSave();
 }
 
-void ir_onCancel(va_list ap) {
+static void ir_onCancel(va_list ap) {
     irRef->onCancel();
 }
 

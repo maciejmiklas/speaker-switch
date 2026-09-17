@@ -30,27 +30,25 @@ void LcdDisplay::print(uint8_t row, uint8_t col, uint8_t size, const char *fmt, 
     char buf[size + 1];
     va_list va;
     va_start(va, fmt);
-    short chars = vsprintf(buf, fmt, va);
+    vsnprintf(buf, size + 1, fmt, va);
     va_end(va);
 
-    cleanRight(buf, chars, size);
+    // Ensure null termination and pad with spaces
+    buf[size] = '\0';
+    for (uint8_t i = strlen(buf); i < size; i++) {
+        buf[i] = ' ';
+    }
+    buf[size] = '\0';
+
     lcd.print(buf);
 }
 
-void LcdDisplay::cleanRight(char *array, short from, short size) {
-    for (short int i = from; i < size; i++) {
-        array[i] = ' ';
-    }
-    array[size] = '\0';
-}
 
 void LcdDisplay::clear(uint8_t row) {
     lcd.setCursor(0, row);
     lcd.print("                ");
     lcd.setCursor(0, row);
 }
-
-
 // https://docs.arduino.cc/learn/electronics/lcd-displays/
 void LcdDisplay::setup() {
     lcdRef = this;

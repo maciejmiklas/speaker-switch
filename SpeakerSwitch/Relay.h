@@ -34,7 +34,7 @@ public:
     void onSubCmd();
 
     // from Device.h
-    void setup();
+    void setup() override;
 
 private:
     static constexpr const char *NAME = "RE";

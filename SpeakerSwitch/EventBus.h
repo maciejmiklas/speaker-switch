@@ -59,21 +59,15 @@ enum class BusEvent: uint8_t {
 
     IR_SUB_CANCEL, // 12
 
-    /* Speaker switched to Yamaha */
-    ALL_SPK_TO_YAMAHA, //13
-
-    /* Speaker switched to Camridge */
-    ALL_SPK_TO_CAMBRIDGE, // 14
-
     /* Sub switched to Yamaha */
-    SUB_TO_YAMAHA, // 15
+    SUB_TO_YAMAHA, // 13
 
     /* Sub switched to Camridge */
-    SUB_TO_CAMBRIDGE, // 16
+    SUB_TO_CAMBRIDGE, // 14
 
-    MENU_START, // 18
+    MENU_START, // 15
 
-    MENU_END, // 19
+    MENU_END, // 16
 
     /* Number of elements in this enum. */
     COUNT

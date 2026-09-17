@@ -26,8 +26,6 @@ class IrSubReceiver : public Device {
 public:
     IrSubReceiver();
 
-    void setup(); // from Device.h
-
     void onCycle();
 
     void onLearn();
@@ -35,6 +33,8 @@ public:
     void onSave();
 
     void onCancel();
+
+    void setup() override; // from Device.h
 
 private:
     static constexpr const char *NAME = "IT";

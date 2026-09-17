@@ -21,6 +21,8 @@
 
 class Device {
 public:
+    virtual ~Device() = default;
+
     /** Called only once after hard reset */
     virtual void setup() = 0;
 };

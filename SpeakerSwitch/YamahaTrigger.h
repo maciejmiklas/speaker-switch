@@ -29,17 +29,17 @@ public:
 
     void onCycle();
 
-    // from Device.h
-    void setup();
-
     void reinitialize();
+
+    // from Device.h
+    void setup() override;
 
 private:
     static constexpr const char *NAME = "YT";
     uint32_t lastChangeMs;
     uint8_t currentTriggerLevel;
 
-    inline void sendEvent(uint8_t triggerLevel);
+    static inline void sendEvent(uint8_t triggerLevel);
 };
 
 #endif  // YAM_TRIGGER_H

@@ -24,31 +24,19 @@ static LcdDisplay *lcdRef;
 LcdDisplay::LcdDisplay() {
 }
 
-void LcdDisplay::print(uint8_t row, uint8_t col, uint8_t size, const char *fmt, ...) {
-    lcd.setCursor(col, row);
-
-    char buf[size + 1];
-    va_list va;
-    va_start(va, fmt);
-    vsnprintf(buf, size + 1, fmt, va);
-    va_end(va);
-
-    // Ensure null termination and pad with spaces
-    buf[size] = '\0';
-    for (uint8_t i = strlen(buf); i < size; i++) {
-        buf[i] = ' ';
-    }
-    buf[size] = '\0';
-
+void LcdDisplay::printLine(const uint8_t row, const char *fmt) {
+    lcd.setCursor(0, row);
+    char buf[17]; // 16 chars + null terminator
+    snprintf(buf, sizeof(buf), "%-16s", fmt);
     lcd.print(buf);
 }
-
 
 void LcdDisplay::clear(uint8_t row) {
     lcd.setCursor(0, row);
     lcd.print("                ");
     lcd.setCursor(0, row);
 }
+
 // https://docs.arduino.cc/learn/electronics/lcd-displays/
 void LcdDisplay::setup() {
     lcdRef = this;

@@ -45,7 +45,6 @@ void Relay::onYamahaTriggerOn() {
 }
 
 void Relay::onYamahaTriggerOff() {
-
 #if LOG && LOG_RE
     log(F("%s CAM ON"), NAME);
 #endif

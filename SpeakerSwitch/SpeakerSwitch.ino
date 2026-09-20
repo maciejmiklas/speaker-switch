@@ -23,16 +23,20 @@
 #include "IrSubReceiver.h"
 #include "LcdDisplay.h"
 #include "Display.h"
+#include "MainMenu.h"
+#include "SystemStateManager.h"
 
+static SystemStateManager *ssm = new SystemStateManager();
 static Buttons *btn = new Buttons();
 static Relay *re = new Relay();
 static IrSubReceiver *irs = new IrSubReceiver();
 static LcdDisplay *lcd = new LcdDisplay();
 static YamahaTrigger *yt = new YamahaTrigger();
-static Display *disp = new Display(lcd);
+static Display *disp = new Display(lcd, ssm);
+static MainMenu *mm = new MainMenu(ssm, lcd);
 
-static constexpr uint8_t DEVICES = 6;
-static Device *dev[DEVICES] = {btn, re, irs, lcd, yt, disp};
+static constexpr uint8_t DEVICES = 8;
+static Device *dev[DEVICES] = {btn, re, irs, lcd, yt, disp, ssm, mm};
 
 static void execSetup();
 

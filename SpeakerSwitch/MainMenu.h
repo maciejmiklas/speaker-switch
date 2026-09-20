@@ -1,5 +1,5 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
+* Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
@@ -14,40 +14,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef IR_SUB_RECEIVER_H
-#define IR_SUB_RECEIVER_H
+
+#ifndef MAIN_MENU_H
+#define MAIN_MENU_H
 
 #include "ArdLog.h"
-#include "EventBus.h"
 #include "Device.h"
-#include "Util.h"
+#include "EventBus.h"
+#include "SystemStateManager.h"
+#include "LcdDisplay.h"
 
-class IrSubReceiver : public Device {
-public:
-    IrSubReceiver();
-
-    void onCycle();
-
-    void onLearn();
-
-    void onSave();
-
-    void onCancel();
-
-    void setup() override; // from Device.h
-
-private:
-    static constexpr const char *NAME = "IR";
-    uint32_t lastChangeMs;
-    uint32_t irSignal1;
-    uint32_t irSignal2;
-    uint32_t irLearnSignal1;
-    uint32_t irLearnSignal2;
-    bool learning;
-
-    void learn();
-
-    void processIr();
+enum class MenuPos: uint8_t {
+    SPK_TO_CAM = 0,
+    SPK_TO_YAM = 1,
+    SPK_TO_IR = 2
 };
 
-#endif  // IR_SUB_RECEIVER_H
+class MainMenu : public Device {
+public:
+    MainMenu(SystemStateManager *sm, LcdDisplay *lcd);
+
+    void onBtnMenu();
+
+    void onBtnOk();
+
+    void onBtnCancel();
+
+    // from Device.h
+    void setup() override;
+
+private:
+    static constexpr const char *NAME = "MM";
+    SystemStateManager *sm;
+    LcdDisplay *lcd;
+    MenuPos pos;
+};
+
+
+#endif

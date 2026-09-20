@@ -19,7 +19,7 @@
 
 static YamahaTrigger *refAt;
 
-YamahaTrigger::YamahaTrigger(): lastChangeMs(0), currentTriggerLevel(255) {
+YamahaTrigger::YamahaTrigger() : lastChangeMs(0), currentTriggerLevel(255) {
 }
 
 static void at_onCycle(va_list ap) {
@@ -53,7 +53,7 @@ void inline YamahaTrigger::sendEvent(const uint8_t triggerLevel) {
 #if LOG && LOG_YT
     log(F("%s AMP %d"), NAME, triggerLevel);
 #endif
-   eb_fire(triggerLevel == HIGH ? BusEvent::YAMAHA_TRIGGER_ON : BusEvent::YAMAHA_TRIGGER_OFF);
+    eb_fire(triggerLevel == HIGH ? BusEvent::YAMAHA_TRIGGER_ON : BusEvent::YAMAHA_TRIGGER_OFF);
 }
 
 void YamahaTrigger::reinitialize() {

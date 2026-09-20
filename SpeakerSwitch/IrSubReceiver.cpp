@@ -19,11 +19,11 @@
 
 static IrSubReceiver *irRef;
 
-IrSubReceiver::IrSubReceiver() : lastChangeMs(0), irSignal1(5689), irSignal2(7737), lerning(false), irLernSignal1(0),
-                                 irLernSignal2(0) {
+IrSubReceiver::IrSubReceiver() : lastChangeMs(0), irSignal1(5689), irSignal2(7737), irLearnSignal1(0),
+                                 irLearnSignal2(0), learning(false) {
 }
 
-static void ir_lern(va_list ap) {
+static void ir_learn(va_list ap) {
     irRef->onLearn();
 }
 
@@ -40,47 +40,44 @@ static void ir_onCancel(va_list ap) {
 }
 
 void IrSubReceiver::onLearn() {
-    irLernSignal1 = 0;
-    irLernSignal2 = 0;
-    lerning = true;
+    irLearnSignal1 = 0;
+    irLearnSignal2 = 0;
+    learning = true;
 }
 
 void IrSubReceiver::learn() {
     uint32_t irin = IrReceiver.decodedIRData.decodedRawData;
 
-    if (irLernSignal1 == 0) {
-        irLernSignal1 = irin;
+    if (irLearnSignal1 == 0) {
+        irLearnSignal1 = irin;
 #if LOG && LOG_IR
         log(F("%s S1:%d"), NAME, irin);
 #endif
-        eb_fire(BusEvent::IR_SUB_LEARNED_1, irin);
-    } else if (irLernSignal2 == 0 && irin != irLernSignal1) {
-        irLernSignal2 = irin;
+    } else if (irLearnSignal2 == 0 && irin != irLearnSignal1) {
+        irLearnSignal2 = irin;
 #if LOG && LOG_IR
         log(F("%s S2:%d"), NAME, irin);
 #endif
-        eb_fire(BusEvent::IR_SUB_LEARNED_2, irin);
     }
 
-    if (irLernSignal1 != 0 && irLernSignal2 != 0) {
-        eb_fire(BusEvent::IR_SUB_LEARNED_OK);
-        lerning = false;
+    if (irLearnSignal1 != 0 && irLearnSignal2 != 0) {
+        learning = false;
     }
 }
 
 void IrSubReceiver::onCancel() {
-    irLernSignal1 = 0;
-    irLernSignal2 = 0;
-    lerning = false;
+    irLearnSignal1 = 0;
+    irLearnSignal2 = 0;
+    learning = false;
 }
 
 void IrSubReceiver::onSave() {
-    irSignal1 = irLernSignal1;
-    irSignal2 = irLernSignal2;
+    irSignal1 = irLearnSignal1;
+    irSignal2 = irLearnSignal2;
 
-    irLernSignal1 = 0;
-    irLernSignal2 = 0;
-    lerning = false;
+    irLearnSignal1 = 0;
+    irLearnSignal2 = 0;
+    learning = false;
 }
 
 void IrSubReceiver::processIr() {
@@ -103,7 +100,7 @@ void IrSubReceiver::onCycle() {
         return;
     }
 
-    if (lerning) {
+    if (learning) {
         learn();
     } else {
         processIr();
@@ -117,7 +114,5 @@ void IrSubReceiver::setup() {
     IrReceiver.begin(IR_RECEIVE_PIN, ENABLE_LED_FEEDBACK);
 
     eb_reg(BusEvent::CYCLE, &ir_onCycle);
-    eb_reg(BusEvent::IR_SUB_LEARN, &ir_lern);
-    eb_reg(BusEvent::IR_SUB_SAVE, &ir_onSave);
-    eb_reg(BusEvent::IR_SUB_CANCEL, &ir_onCancel);
+    eb_reg(BusEvent::IR_SUB_LEARN, &ir_learn);
 }

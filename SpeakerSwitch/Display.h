@@ -22,10 +22,11 @@
 #include "Device.h"
 #include "Util.h"
 #include "LcdDisplay.h"
+#include "SystemStateManager.h"
 
 class Display : public Device {
 public:
-    Display(LcdDisplay *lcd);
+    Display(LcdDisplay *lcd, SystemStateManager *ssm);
 
     void onCycle();
 
@@ -39,9 +40,7 @@ public:
 
     void onRemoteInput();
 
-    void onMenuStart();
-
-    void onMenuEnd();
+    void onSystemStateChanged(SystemState state);
 
     // from Device.h
     void setup() override;
@@ -52,13 +51,15 @@ private:
 
     bool speakerToCambridge;
     bool subToCambridge;
-    bool autoUpdateEnabled;
-    volatile uint32_t infoDisplayMs;
+    uint32_t infoDisplayMs;
     LcdDisplay *lcd;
+    SystemStateManager *ssm;
 
     void printSpeakersAssigment() const;
 
     void resetInfoDisplay();
+
+    bool autoRefresh() const;
 };
 
 #endif  // DISPLAY_H

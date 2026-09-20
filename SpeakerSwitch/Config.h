@@ -89,4 +89,7 @@ static constexpr uint8_t LC_LCD_K = DIO_7;
 // ######## Display(DS) ########
 static constexpr uint16_t DS_INFO_DELAY_MS = 2000;
 
+// ######## SystemStateManager(SM) ########
+static constexpr uint16_t SM_IDLE_TIMEOUT_MS = 60000; // 60 seconds
+
 #endif  // CONFIG_H

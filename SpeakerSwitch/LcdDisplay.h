@@ -27,16 +27,14 @@ class LcdDisplay : public Device {
 public:
     LcdDisplay();
 
-
     void clear(uint8_t row);
 
-    void print(uint8_t row, uint8_t col, uint8_t size, const char *fmt, ...);
+    void printLine(uint8_t row, const char *fmt);
 
     void setup() override; // from Device.h
 
 private:
     static constexpr const char *NAME = "LC";
-
 };
 
 #endif  // LCD_DISPLAY_H

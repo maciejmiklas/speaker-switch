@@ -47,6 +47,12 @@
 /** Enable logger for: Display */
 #define LOG_DS true
 
+/** Enable logger for: SystemStateManager */
+#define LOG_SM true
+
+/** Enable logger for: MainMenu */
+#define LOG_MM true
+
 void log_setup();
 
 void log_cycle();

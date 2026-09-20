@@ -46,28 +46,15 @@ enum class BusEvent: uint8_t {
     /* IR learn mode on for SUB. */
     IR_SUB_LEARN, // 7
 
-    /* IR has learned value 1. */
-    IR_SUB_LEARNED_1, // 8
-
-    /* IR has learned value 1. */
-    IR_SUB_LEARNED_2, // 9
-
-    /* IR has learned both values */
-    IR_SUB_LEARNED_OK, // 10
-
-    IR_SUB_SAVE, // 11
-
-    IR_SUB_CANCEL, // 12
+    IR_SUB_LEARN_END, // 8
 
     /* Sub switched to Yamaha */
-    SUB_TO_YAMAHA, // 13
+    SUB_TO_YAMAHA, // 9
 
-    /* Sub switched to Camridge */
-    SUB_TO_CAMBRIDGE, // 14
+    /* Sub switched to Cambridge */
+    SUB_TO_CAMBRIDGE, // 10
 
-    MENU_START, // 15
-
-    MENU_END, // 16
+    SYSTEM_STATE_CHANGE, // 11
 
     /* Number of elements in this enum. */
     COUNT

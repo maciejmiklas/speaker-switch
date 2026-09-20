@@ -1,5 +1,5 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
+* Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
@@ -14,40 +14,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef IR_SUB_RECEIVER_H
-#define IR_SUB_RECEIVER_H
+
+#ifndef SYSTEM_STATE_H
+#define SYSTEM_STATE_H
 
 #include "ArdLog.h"
 #include "EventBus.h"
 #include "Device.h"
-#include "Util.h"
 
-class IrSubReceiver : public Device {
+enum class SystemState: uint8_t {
+    IDLE = 0,
+    MAIN_MENU = 1,
+    IR_LEARN = 2
+};
+
+class SystemStateManager : public Device {
 public:
-    IrSubReceiver();
+    SystemStateManager();
+
+    SystemState get() const;
 
     void onCycle();
 
-    void onLearn();
-
-    void onSave();
-
-    void onCancel();
-
-    void setup() override; // from Device.h
+    // from Device.h
+    void setup() override;
 
 private:
-    static constexpr const char *NAME = "IR";
-    uint32_t lastChangeMs;
-    uint32_t irSignal1;
-    uint32_t irSignal2;
-    uint32_t irLearnSignal1;
-    uint32_t irLearnSignal2;
-    bool learning;
+    static constexpr const char *NAME = "SM";
+    SystemState state;
+    uint32_t lastStateChange;
 
-    void learn();
-
-    void processIr();
+    void changeState(SystemState state);
 };
 
-#endif  // IR_SUB_RECEIVER_H
+#endif

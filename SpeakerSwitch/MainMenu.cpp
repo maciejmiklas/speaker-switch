@@ -23,6 +23,10 @@ static void mm_onBtnCancel(va_list ap) {
     refMen->onBtnCancel();
 }
 
+static void mm_onSystemStateChange(va_list ap) {
+    refMen->onSystemStateChange(va_arg(ap, SystemState));
+}
+
 static void mm_onBtnMenu(va_list ap) {
     refMen->onBtnMenu();
 }
@@ -38,37 +42,62 @@ MainMenu::MainMenu(SystemStateManager *sm, LcdDisplay *lcd) : sm(sm), lcd(lcd), 
 void MainMenu::onBtnCancel() {
 }
 
-void MainMenu::onBtnMenu() {
-    if (sm->get() != SystemState::IDLE) {
-        return;
+void MainMenu::onSystemStateChange(SystemState state) {
+    if (state == SystemState::IDLE) {
+        resetMenu();
     }
+}
 
-    // Move to next position, wrap to first when reaching end
-    if (pos == MenuPos::SPK_TO_IR) {
-        pos = MenuPos::SPK_TO_CAM;
-    } else {
-        pos = static_cast<MenuPos>(static_cast<uint8_t>(pos) + 1);
-    }
+void MainMenu::onBtnMenu() {
+    LOG_MM(F("%s POS %d"), NAME, static_cast<uint8_t>(pos));
+
+    sm->changeState(SystemState::MAIN_MENU);
 
     switch (pos) {
         case MenuPos::SPK_TO_CAM:
-            lcd->printLine(0, "SPK TO");
-            lcd->printLine(0, "CAMBRIDGE ?");
+            lcd->printLine(0, "SPEAKERS TO");
+            lcd->printLine(1, "CAMBRIDGE ?");
             break;
         case MenuPos::SPK_TO_YAM:
-            lcd->printLine(0, "SPK TO ");
-            lcd->printLine(0, "YAMAHA ?");
+            lcd->printLine(0, "SPEAKERS TO");
+            lcd->printLine(1, "YAMAHA ?");
             break;
         case MenuPos::SPK_TO_IR:
+            lcd->printLine(0, "IR");
+            lcd->printLine(1, "TODO ....");
             break;
+    }
+
+    // Move to next position, wrap to first when reaching end
+    if (pos == MenuPos::LAST) {
+        pos = MenuPos::FIRST;
+    } else {
+        pos = static_cast<MenuPos>(static_cast<uint8_t>(pos) + 1);
     }
 }
 
 void MainMenu::onBtnOk() {
+    if (sm->get() == SystemState::MAIN_MENU) {
+        switch (pos) {
+            case MenuPos::SPK_TO_CAM:
+                lcd->printLine(0, "SPEAKERS TO");
+                lcd->printLine(1, "CAMBRIDGE ?");
+                break;
+            case MenuPos::SPK_TO_YAM:
+                lcd->printLine(0, "SPEAKERS TO");
+                lcd->printLine(1, "YAMAHA ?");
+                break;
+        }
+    }
+}
+
+void MainMenu::resetMenu() {
+    pos = MenuPos::FIRST;
 }
 
 void MainMenu::setup() {
     eb_reg(BusEvent::BTN_CANCEL, &mm_onBtnCancel);
     eb_reg(BusEvent::BTN_MENU, &mm_onBtnMenu);
     eb_reg(BusEvent::BTN_OK, &mm_onBtnOk);
+    eb_reg(BusEvent::SYSTEM_STATE_CHANGE, &mm_onSystemStateChange);
 }

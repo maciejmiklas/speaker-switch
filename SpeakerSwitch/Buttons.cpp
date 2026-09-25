@@ -44,7 +44,7 @@ void Buttons::onCycle() {
     processMs = util_ms();
 }
 
-bool Buttons::canProcess(uint8_t pin) {
+bool Buttons::canProcess(const uint8_t pin) {
     if (digitalRead(pin) != LOW) {
         return false;
     }
@@ -52,36 +52,31 @@ bool Buttons::canProcess(uint8_t pin) {
     if (lastButton == pin) {
         if (util_ms() - repeatMs < BT_REP_PRESS_MS) {
             return false;
-        } else {
-            lastButton = 0;
-            repeatMs = 0;
         }
+        repeatMs = util_ms();
     } else {
         lastButton = pin;
         repeatMs = util_ms();
     }
-
     return true;
 }
 
 void Buttons::readButtons() {
-    uint8_t pin = LC_LCD_E;
 
     if (canProcess(BT_PIN_MENU)) {
-#if LOG && LOG_BT
-        log(F("%s MENU"), NAME);
-#endif
+        LOG_BT(F("%s MENU"), NAME);
         eb_fire(BusEvent::BTN_MENU);
+        eb_fire(BusEvent::BTN_ANY);
+
     } else if (canProcess(BT_PIN_OK)) {
-#if LOG && LOG_BT
-        log(F("%s OK"), NAME);
-#endif
+        LOG_BT(F("%s OK"), NAME);
         eb_fire(BusEvent::BTN_OK);
+        eb_fire(BusEvent::BTN_ANY);
+
     } else if (canProcess(BT_PIN_CANCEL)) {
-#if LOG && LOG_BT
-        log(F("%s CANCEL"), NAME);
-#endif
+        LOG_BT(F("%s CANCEL"), NAME);
         eb_fire(BusEvent::BTN_CANCEL);
+        eb_fire(BusEvent::BTN_ANY);
     }
 }
 

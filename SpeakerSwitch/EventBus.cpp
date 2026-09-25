@@ -21,9 +21,9 @@ static constexpr const char *NAME = "EB";
 static constexpr uint8_t EVENTS_SIZE = static_cast<uint8_t>(BusEvent::COUNT);
 
 /** Max listeners pro event, not a total amount of the listeners. */
-static constexpr uint8_t LISTENERS_MAX = 6;
+static constexpr uint8_t EVENT_LISTENERS_MAX = 6;
 
-static void (*BUS_LIST_FN[EVENTS_SIZE][LISTENERS_MAX])(va_list);
+static void (*BUS_LIST_FN[EVENTS_SIZE][EVENT_LISTENERS_MAX])(va_list);
 
 static uint8_t BUS_LIST_FN_SIZE[EVENTS_SIZE] = {0};
 
@@ -34,17 +34,13 @@ static uint8_t eb_getFnIdx(BusEvent event) {
 void eb_reg(BusEvent event, void ((*fn)(va_list))) {
     const uint8_t eventIdx = eb_getFnIdx(event);
     const uint8_t fnIdx = BUS_LIST_FN_SIZE[eventIdx]++;
-    if (fnIdx >= LISTENERS_MAX) {
-#if LOG
-        log(F("%s LN OVERFLOW"), NAME);
-#endif
+    if (fnIdx >= EVENT_LISTENERS_MAX) {
+        LOG_EB(F("%s LN OVERFLOW"), NAME);
         BUS_LIST_FN_SIZE[eventIdx]--;
         return;
     }
     BUS_LIST_FN[eventIdx][fnIdx] = fn;
-#if LOG && LOG_EB
-    log(F("%s REG %d=%d"), NAME, static_cast<int>(event), fnIdx);
-#endif
+    LOG_EB(F("%s REG %d=%d"), NAME, static_cast<int>(event), fnIdx);
 }
 
 void eb_fire(const BusEvent event, ...) {
@@ -54,13 +50,9 @@ void eb_fire(const BusEvent event, ...) {
     const uint8_t eventIdx = eb_getFnIdx(event);
     const uint8_t eventsSize = BUS_LIST_FN_SIZE[eventIdx];
 
-
-
     if (event != BusEvent::CYCLE) {
-        log(F("%s EVENT"), NAME);
-        //log(F("%s EVENT %d->%d"), NAME, eventIdx, eventsSize);
+        log(F("%s EVENT %d->%d"), NAME, eventIdx, eventsSize);
     }
-
 
     for (uint8_t fnIdx = 0; fnIdx < eventsSize; fnIdx++) {
         BUS_LIST_FN[eventIdx][fnIdx](ap);

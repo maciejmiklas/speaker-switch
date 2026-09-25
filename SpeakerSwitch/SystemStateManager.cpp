@@ -20,8 +20,16 @@
 
 static SystemStateManager *refSm;
 
+static void sm_onAnyButtonPress(va_list ap) {
+    refSm->onAnyButtonPress();
+}
+
 static void sm_onCycle(va_list ap) {
     refSm->onCycle();
+}
+
+void SystemStateManager::onAnyButtonPress() {
+    lastStateChange = util_ms();
 }
 
 SystemStateManager::SystemStateManager() : state(SystemState::IDLE), lastStateChange(0) {
@@ -34,19 +42,21 @@ SystemState SystemStateManager::get() const {
 
 void SystemStateManager::onCycle() {
     if (state != SystemState::IDLE && util_ms() > lastStateChange + SM_IDLE_TIMEOUT_MS) {
-#if LOG && LOG_SM
-        log(F("%s GO IDLE"), NAME);
-#endif
+        LOG_SM(F("%s GO IDLE"), NAME);
         changeState(SystemState::IDLE);
     }
 }
 
 void SystemStateManager::changeState(const SystemState state) {
-    this->state = state;
     lastStateChange = util_ms();
-    eb_fire(BusEvent::SYSTEM_STATE_CHANGE, state);
+
+    if (this->state != state) {
+        this->state = state;
+        eb_fire(BusEvent::SYSTEM_STATE_CHANGE, state);
+    }
 }
 
 void SystemStateManager::setup() {
     eb_reg(BusEvent::CYCLE, &sm_onCycle);
+    eb_reg(BusEvent::BTN_ANY, &sm_onAnyButtonPress);
 }

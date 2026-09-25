@@ -50,9 +50,7 @@ void YamahaTrigger::onCycle() {
 }
 
 void inline YamahaTrigger::sendEvent(const uint8_t triggerLevel) {
-#if LOG && LOG_YT
-    log(F("%s AMP %d"), NAME, triggerLevel);
-#endif
+    LOG_YT(F("%s AMP %d"), NAME, triggerLevel);
     eb_fire(triggerLevel == HIGH ? BusEvent::YAMAHA_TRIGGER_ON : BusEvent::YAMAHA_TRIGGER_OFF);
 }
 

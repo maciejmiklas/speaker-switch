@@ -36,6 +36,10 @@ public:
 
     void onCycle();
 
+    void onAnyButtonPress();
+
+    void changeState(SystemState state);
+
     // from Device.h
     void setup() override;
 
@@ -43,8 +47,6 @@ private:
     static constexpr const char *NAME = "SM";
     SystemState state;
     uint32_t lastStateChange;
-
-    void changeState(SystemState state);
 };
 
 #endif

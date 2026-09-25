@@ -24,34 +24,84 @@
 #define LOG true
 
 /** Enable logger for: SpeakerSwitch */
-#define LOG_SW true
+#define LOG_SW_ON true
+#if LOG && LOG_SW_ON
+    #define LOG_SW(...) log(__VA_ARGS__)
+#else
+    #define LOG_SW(...) ((void)0)
+#endif
 
 /** Enable logger for: EventBus */
-#define LOG_EB true
+#define LOG_EB_ON true
+#if LOG && LOG_EB_ON
+    #define LOG_EB(...) log(__VA_ARGS__)
+#else
+    #define LOG_EB(...) ((void)0)
+#endif
 
 /** Enable logger for: Buttons */
-#define LOG_BT true
+#define LOG_BT_ON true
+#if LOG && LOG_BT_ON
+    #define LOG_BT(...) log(__VA_ARGS__)
+#else
+    #define LOG_BT(...) ((void)0)
+#endif
 
 /** Enable logger for: YamahaTrigger */
-#define LOG_YT true
+#define LOG_YT_ON true
+#if LOG && LOG_YT_ON
+    #define LOG_YT(...) log(__VA_ARGS__)
+#else
+    #define LOG_YT(...) ((void)0)
+#endif
 
 /** Enable logger for: Relay */
-#define LOG_RE true
+#define LOG_RE_ON true
+#if LOG && LOG_RE_ON
+    #define LOG_RE(...) log(__VA_ARGS__)
+#else
+    #define LOG_RE(...) ((void)0)
+#endif
 
-/** Enable logger for: IrReceiver */
-#define LOG_IR true
+/** Enable logger for: IrSubReceiver */
+#define LOG_IR_ON true
+#if LOG && LOG_IR_ON
+    #define LOG_IR(...) log(__VA_ARGS__)
+#else
+    #define LOG_IR(...) ((void)0)
+#endif
 
 /** Enable logger for: LcdDisplay */
-#define LOG_LC true
+#define LOG_LC_ON true
+#if LOG && LOG_LC_ON
+    #define LOG_LC(...) log(__VA_ARGS__)
+#else
+    #define LOG_LC(...) ((void)0)
+#endif
 
 /** Enable logger for: Display */
-#define LOG_DS true
+#define LOG_DS_ON true
+#if LOG && LOG_DS_ON
+    #define LOG_DS(...) log(__VA_ARGS__)
+#else
+    #define LOG_DS(...) ((void)0)
+#endif
 
 /** Enable logger for: SystemStateManager */
-#define LOG_SM true
+#define LOG_SM_ON true
+#if LOG && LOG_SM_ON
+    #define LOG_SM(...) log(__VA_ARGS__)
+#else
+    #define LOG_SM(...) ((void)0)
+#endif
 
 /** Enable logger for: MainMenu */
-#define LOG_MM true
+#define LOG_MM_ON true
+#if LOG && LOG_MM_ON
+    #define LOG_MM(...) log(__VA_ARGS__)
+#else
+    #define LOG_MM(...) ((void)0)
+#endif
 
 void log_setup();
 

@@ -45,9 +45,7 @@ void setup() {
     log_setup();
 #endif
 
-#if LOG && LOG_SW
-    log(F("\n\n### SETUP ###"));
-#endif
+    LOG_SW(F("\n\n### SETUP ###"));
 
     util_cycle();
     execSetup();

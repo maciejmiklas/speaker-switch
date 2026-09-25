@@ -25,9 +25,13 @@
 #include "LcdDisplay.h"
 
 enum class MenuPos: uint8_t {
-    SPK_TO_CAM = 0,
+    FIRST = 0,
+
+    SPK_TO_CAM = FIRST,
     SPK_TO_YAM = 1,
-    SPK_TO_IR = 2
+    SPK_TO_IR = 2,
+
+    LAST = SPK_TO_IR
 };
 
 class MainMenu : public Device {
@@ -40,6 +44,8 @@ public:
 
     void onBtnCancel();
 
+    void onSystemStateChange(SystemState state);
+
     // from Device.h
     void setup() override;
 
@@ -48,6 +54,8 @@ private:
     SystemStateManager *sm;
     LcdDisplay *lcd;
     MenuPos pos;
+
+    void resetMenu();
 };
 
 

@@ -50,14 +50,10 @@ void IrSubReceiver::learn() {
 
     if (irLearnSignal1 == 0) {
         irLearnSignal1 = irin;
-#if LOG && LOG_IR
-        log(F("%s S1:%d"), NAME, irin);
-#endif
+        LOG_IR(F("%s S1:%d"), NAME, irin);
     } else if (irLearnSignal2 == 0 && irin != irLearnSignal1) {
         irLearnSignal2 = irin;
-#if LOG && LOG_IR
-        log(F("%s S2:%d"), NAME, irin);
-#endif
+        LOG_IR(F("%s S2:%d"), NAME, irin);
     }
 
     if (irLearnSignal1 != 0 && irLearnSignal2 != 0) {
@@ -88,9 +84,7 @@ void IrSubReceiver::processIr() {
     lastChangeMs = util_ms();
     uint32_t irin = IrReceiver.decodedIRData.decodedRawData;
     if (irin == irSignal1 || irin == irSignal2) {
-#if LOG && LOG_IR
-        log(F("%s CMD:%d"), NAME, irin);
-#endif
+        LOG_IR(F("%s CMD:%d"), NAME, irin);
         eb_fire(BusEvent::IR_SUB_CMD);
     }
 }

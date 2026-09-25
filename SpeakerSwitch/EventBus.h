@@ -20,7 +20,7 @@
 #include "Arduino.h"
 #include "ArdLog.h"
 
-/* To add new event: 1) Insert new enumaration into BusEvent 2) Increase #EVENTS_SIZE 3) Insert new enum into #BUS_LISTENERS */
+/* To add new event: 1) Insert new enumeration into BusEvent 2) Increase #EVENTS_SIZE 3) Insert new enum into #BUS_LISTENERS */
 enum class BusEvent: uint8_t {
     // #### Values are indexed! ####
     CYCLE = 0,
@@ -40,21 +40,24 @@ enum class BusEvent: uint8_t {
     /* Button CANCEL pressed. */
     BTN_CANCEL, // 5
 
+    /* Any pressed. */
+    BTN_ANY, // 6
+
     /* IR command to flip SUB. */
-    IR_SUB_CMD, // 6
+    IR_SUB_CMD, // 7
 
     /* IR learn mode on for SUB. */
-    IR_SUB_LEARN, // 7
+    IR_SUB_LEARN, // 8
 
-    IR_SUB_LEARN_END, // 8
+    IR_SUB_LEARN_END, // 9
 
     /* Sub switched to Yamaha */
-    SUB_TO_YAMAHA, // 9
+    SUB_TO_YAMAHA, // 10
 
     /* Sub switched to Cambridge */
-    SUB_TO_CAMBRIDGE, // 10
+    SUB_TO_CAMBRIDGE, // 11
 
-    SYSTEM_STATE_CHANGE, // 11
+    SYSTEM_STATE_CHANGE, // 12
 
     /* Number of elements in this enum. */
     COUNT

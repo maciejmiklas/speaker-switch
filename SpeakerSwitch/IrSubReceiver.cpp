@@ -162,11 +162,7 @@ void IrSubReceiver::onBtnOk() {
     state = IrState::RECEIVING;
     ssm->changeState(SystemState::IDLE);
 
-    // Save to EEPROM
-    uint32_t magic = EEPROM_MAGIC;
-    EEPROM.put(EEPROM_MAGIC_ADDR, magic);
-    EEPROM.put(EEPROM_IR_SIGNAL1_ADDR, irSignal1);
-    EEPROM.put(EEPROM_IR_SIGNAL2_ADDR, irSignal2);
+    Storage::saveIrSignals(irSignal1, irSignal2);
 }
 
 void IrSubReceiver::onShowCodes() {
@@ -211,11 +207,7 @@ void IrSubReceiver::setup() {
     IrReceiver.begin(IR_RECEIVE_PIN, ENABLE_LED_FEEDBACK);
 
     // Load IR signals from EEPROM if valid
-    uint32_t magic;
-    EEPROM.get(EEPROM_MAGIC_ADDR, magic);
-    if (magic == EEPROM_MAGIC) {
-        EEPROM.get(EEPROM_IR_SIGNAL1_ADDR, irSignal1);
-        EEPROM.get(EEPROM_IR_SIGNAL2_ADDR, irSignal2);
+    if (Storage::loadIrSignals(irSignal1, irSignal2)) {
         LOG_IR(F("%s Loaded IR codes: 0x%lX, 0x%lX"), NAME, (unsigned long)irSignal1, (unsigned long)irSignal2);
     }
 

@@ -31,8 +31,9 @@ enum class MenuPos: uint8_t {
     SUB_TO_YAM = 4,
     IR_LEARN = 5,
     IR_SHOW_CODES = 6,
+    LCD_BRIGHTNESS = 7,
 
-    LAST = IR_SHOW_CODES
+    LAST = LCD_BRIGHTNESS
 };
 
 class MainMenu : public Device {

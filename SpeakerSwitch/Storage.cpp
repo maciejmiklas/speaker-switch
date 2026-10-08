@@ -14,33 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LCD_DISPLAY_H
-#define LCD_DISPLAY_H
+#include "Storage.h"
 
-#include "ArdLog.h"
-#include "EventBus.h"
-#include "Device.h"
-#include "Util.h"
-#include "LiquidCrystal.h"
+void Storage::saveIrSignals(uint32_t irSignal1, uint32_t irSignal2) {
+    uint32_t magic = EEPROM_MAGIC;
+    EEPROM.put(EEPROM_MAGIC_ADDR, magic);
+    EEPROM.put(EEPROM_IR_SIGNAL1_ADDR, irSignal1);
+    EEPROM.put(EEPROM_IR_SIGNAL2_ADDR, irSignal2);
+}
 
-class LcdDisplay : public Device {
-public:
-    LcdDisplay();
-
-    void onBrightnessUp();
-
-    void clear(uint8_t row);
-
-    void printLine(uint8_t row, const char *fmt);
-
-    void printLines(const char *line1,const char *line2);
-
-    void setup() override; // from Device.h
-
-    void onCycle() override; // from Device.h
-
-private:
-    static constexpr const char *NAME = "LC";
-};
-
-#endif  // LCD_DISPLAY_H
+bool Storage::loadIrSignals(uint32_t &irSignal1, uint32_t &irSignal2) {
+    uint32_t magic;
+    EEPROM.get(EEPROM_MAGIC_ADDR, magic);
+    if (magic == EEPROM_MAGIC) {
+        EEPROM.get(EEPROM_IR_SIGNAL1_ADDR, irSignal1);
+        EEPROM.get(EEPROM_IR_SIGNAL2_ADDR, irSignal2);
+        return true;
+    }
+    return false;
+}

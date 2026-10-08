@@ -14,33 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LCD_DISPLAY_H
-#define LCD_DISPLAY_H
+#ifndef STORAGE_H
+#define STORAGE_H
 
-#include "ArdLog.h"
-#include "EventBus.h"
-#include "Device.h"
-#include "Util.h"
-#include "LiquidCrystal.h"
+#include <Arduino.h>
+#include <EEPROM.h>
 
-class LcdDisplay : public Device {
+class Storage {
 public:
-    LcdDisplay();
-
-    void onBrightnessUp();
-
-    void clear(uint8_t row);
-
-    void printLine(uint8_t row, const char *fmt);
-
-    void printLines(const char *line1,const char *line2);
-
-    void setup() override; // from Device.h
-
-    void onCycle() override; // from Device.h
+    static void saveIrSignals(uint32_t irSignal1, uint32_t irSignal2);
+    static bool loadIrSignals(uint32_t &irSignal1, uint32_t &irSignal2);
 
 private:
-    static constexpr const char *NAME = "LC";
+    static constexpr uint16_t EEPROM_MAGIC_ADDR = 0;
+    static constexpr uint32_t EEPROM_MAGIC = 0xDEADBEEF;
+    static constexpr uint16_t EEPROM_IR_SIGNAL1_ADDR = 4;
+    static constexpr uint16_t EEPROM_IR_SIGNAL2_ADDR = 8;
 };
 
-#endif  // LCD_DISPLAY_H
+#endif  // STORAGE_H

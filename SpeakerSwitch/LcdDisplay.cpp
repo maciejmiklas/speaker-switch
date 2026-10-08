@@ -24,6 +24,10 @@ static LcdDisplay *lcdRef;
 LcdDisplay::LcdDisplay() {
 }
 
+static void lcd_onBrightnessUp(va_list ap) {
+    lcdRef->onBrightnessUp();
+}
+
 void LcdDisplay::printLine(const uint8_t row, const char *fmt) {
     lcd.setCursor(0, row);
     char buf[17]; // 16 chars + null terminator
@@ -42,6 +46,10 @@ void LcdDisplay::printLines(const char *line1, const char *line2) {
     printLine(1, line2);
 }
 
+void LcdDisplay::onBrightnessUp() {
+
+}
+
 // https://docs.arduino.cc/learn/electronics/lcd-displays/
 void LcdDisplay::setup() {
     lcdRef = this;
@@ -51,6 +59,8 @@ void LcdDisplay::setup() {
 
     lcd.begin(16, 2);
     lcd.noAutoscroll();
+
+    eb_reg(BusEvent::LCD_BRIGHTNESS_UP, &lcd_onBrightnessUp);
 }
 
 void LcdDisplay::onCycle() {

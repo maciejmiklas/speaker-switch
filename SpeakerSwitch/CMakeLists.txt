@@ -15,9 +15,8 @@ add_executable(SpeakerSwitch
         Util.cpp
         YamahaTrigger.cpp
         SystemStatemanager.cpp
-        SystemStateManager.h
-        MainMenu.cpp
-        MainMenu.h
+        MainMenu.cpp,
+        Storage.cpp
 )
 
 target_include_directories(SpeakerSwitch PRIVATE

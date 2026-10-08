@@ -64,8 +64,10 @@ enum class BusEvent: uint8_t {
 
     SYSTEM_STATE_CHANGE = 13,
 
+    LCD_BRIGHTNESS_UP = 14,
+
     /* Number of elements in this enum. */
-    COUNT = 14
+    COUNT = 15
 };
 
 void eb_fire(BusEvent event, ...);

@@ -79,6 +79,10 @@ void MainMenu::onBtnMenu() {
         case MenuPos::IR_SHOW_CODES:
             lcd->printLines("SHOW IR CODES", "FOR SUB SWITCH");
             break;
+
+        case MenuPos::LCD_BRIGHTNESS:
+            lcd->printLines("CHANGE LCD", "BRIGHTNESS");
+            break;
     }
 }
 
@@ -121,6 +125,10 @@ void MainMenu::onBtnOk() const {
 
         case MenuPos::IR_SHOW_CODES:
             eb_fire(BusEvent::IR_SUB_SHOW_CODES);
+            break;
+
+        case MenuPos::LCD_BRIGHTNESS:
+            eb_fire(BusEvent::LCD_BRIGHTNESS_UP);
             break;
     }
 }

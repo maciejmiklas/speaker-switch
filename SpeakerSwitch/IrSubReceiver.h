@@ -23,6 +23,7 @@
 #include "Util.h"
 #include "LcdDisplay.h"
 #include "SystemStateManager.h"
+#include "Storage.h"
 #include <EEPROM.h>
 
 enum class IrState: uint8_t {

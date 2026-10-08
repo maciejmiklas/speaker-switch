@@ -20,7 +20,7 @@
 #include <Arduino.h>
 
 static constexpr const char *APP_NAME = " Speaker Switch ";
-static constexpr const char *VERSION = "     v2.00      ";
+static constexpr const char *VERSION =  "      v2.1      ";
 
 // ######## DIGITAL PINs ########
 static constexpr uint8_t DIO_0 = 0; //   [PIN:30, PD0] Hardware Serial RX/TX
@@ -73,7 +73,8 @@ static constexpr uint8_t RE_SPK_PIN = DIO_8;
 
 // ######## IrReceiver(IR) ########
 static constexpr uint8_t IR_RECEIVE_PIN = DIO_9;
-static constexpr uint16_t IR_STATE_CHANGE_MS = 1000;
+static constexpr uint16_t IR_STATE_CHANGE_MS = 500;
+static constexpr uint16_t SHOW_IR_LEARN2_MS = 2000;
 
 // ######## LcdDisplay(LC) ########
 static constexpr uint8_t LC_LCD_RS = DIO_10;
@@ -87,9 +88,9 @@ static constexpr uint8_t LC_LCD_D7 = DIO_2;
 static constexpr uint8_t LC_LCD_K = DIO_7;
 
 // ######## Display(DS) ########
-static constexpr uint16_t DS_INFO_DELAY_MS = 2000;
+static constexpr uint16_t DS_INFO_DELAY_MS = 3000;
 
 // ######## SystemStateManager(SM) ########
-static constexpr uint16_t SM_IDLE_TIMEOUT_MS = 10000; // 10 seconds
+static constexpr uint16_t SM_IDLE_TIMEOUT_MS = 60000; // 60 seconds
 
 #endif  // CONFIG_H

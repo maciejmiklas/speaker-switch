@@ -1,4 +1,3 @@
-#include "Arduino.h"
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -18,35 +17,43 @@
 #ifndef RELAY_H
 #define RELAY_H
 
+#include "Device.h"
 #include "ArdLog.h"
 #include "EventBus.h"
-#include "Device.h"
-#include "Util.h"
 
 class Relay : public Device {
 public:
     Relay();
 
-    void onYamahaTriggerOn();
+    void onSpeakerToYamaha();
 
-    void onYamahaTriggerOff();
+    void onSpeakerToCambridge();
 
-    void onSubCmd();
+    void onSubToYamaha();
 
-    // from Device.h
-    void setup() override;
+    void onSubToCambridge();
+
+    void setup() override; // from Device.h
+
+    void onCycle() override; // from Device.h
+
+    bool isSpeakerToCambridge() const;
+
+    bool isSubToCambridge() const;
 
 private:
     static constexpr const char *NAME = "RE";
-    bool subCambridge;
 
-    void spkToYamaha();
+    bool speakerToCambridge;
+    bool subToCambridge;
 
-    void spkToCambridge();
+    void switchSpkToYamaha();
 
-    void subToYamaha();
+    void switchSpkToCambridge();
 
-    void subToCambridge();
+    void switchSubToYamaha();
+
+    void switchSubToCambridge();
 };
 
 #endif  // SUB_RELAY_H

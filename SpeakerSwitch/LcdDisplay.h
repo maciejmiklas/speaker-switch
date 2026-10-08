@@ -31,7 +31,11 @@ public:
 
     void printLine(uint8_t row, const char *fmt);
 
+    void printLines(const char *line1,const char *line2);
+
     void setup() override; // from Device.h
+
+    void onCycle() override; // from Device.h
 
 private:
     static constexpr const char *NAME = "LC";

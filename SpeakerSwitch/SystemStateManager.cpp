@@ -24,9 +24,6 @@ static void sm_onAnyButtonPress(va_list ap) {
     refSm->onAnyButtonPress();
 }
 
-static void sm_onCycle(va_list ap) {
-    refSm->onCycle();
-}
 
 void SystemStateManager::onAnyButtonPress() {
     lastStateChange = util_ms();
@@ -40,8 +37,13 @@ SystemState SystemStateManager::get() const {
     return state;
 }
 
+bool SystemStateManager::isMenuActive() const {
+    return state == SystemState::IR_LEARN || state == SystemState::MAIN_MENU;
+}
+
 void SystemStateManager::onCycle() {
-    if (state != SystemState::IDLE && util_ms() > lastStateChange + SM_IDLE_TIMEOUT_MS) {
+    if (state != SystemState::IDLE
+        && util_ms() > lastStateChange + SM_IDLE_TIMEOUT_MS) {
         LOG_SM(F("%s GO IDLE"), NAME);
         changeState(SystemState::IDLE);
     }
@@ -57,6 +59,5 @@ void SystemStateManager::changeState(const SystemState state) {
 }
 
 void SystemStateManager::setup() {
-    eb_reg(BusEvent::CYCLE, &sm_onCycle);
     eb_reg(BusEvent::BTN_ANY, &sm_onAnyButtonPress);
 }

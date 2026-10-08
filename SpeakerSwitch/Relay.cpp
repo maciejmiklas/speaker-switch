@@ -19,73 +19,65 @@
 
 static Relay *relayRef;
 
-Relay::Relay() : subCambridge(true) {
+Relay::Relay() : speakerToCambridge(false), subToCambridge(false) {
 }
 
-static void re_onYamahaTriggerOn(va_list ap) {
-    relayRef->onYamahaTriggerOn();
+static void re_onSpeakerToYamaha(va_list ap) {
+    relayRef->onSpeakerToYamaha();
 }
 
-static void re_onYamahaTriggerOff(va_list ap) {
-    relayRef->onYamahaTriggerOff();
+static void re_onSpeakerToCambridge(va_list ap) {
+    relayRef->onSpeakerToCambridge();
 }
 
-static void re_onSubCmd(va_list ap) {
-    relayRef->onSubCmd();
+static void re_onSubToYamaha(va_list ap) {
+    relayRef->onSubToYamaha();
 }
 
-void Relay::onYamahaTriggerOn() {
-    subCambridge = false;
-
-#if LOG && LOG_RE
-    log(F("%s YAM ON"), NAME);
-#endif
-    spkToYamaha();
-    subToYamaha();
+static void re_onSubToCambridge(va_list ap) {
+    relayRef->onSubToCambridge();
 }
 
-void Relay::onYamahaTriggerOff() {
-#if LOG && LOG_RE
-    log(F("%s CAM ON"), NAME);
-#endif
-    spkToCambridge();
-    subToCambridge();
+void Relay::onSpeakerToYamaha() {
+    LOG_RE(F("%s SPK TO YAMAHA"), NAME);
+    switchSpkToYamaha();
+    switchSubToYamaha();
 }
 
-void Relay::onSubCmd() {
-    if (subCambridge) {
-#if LOG && LOG_RE
-        log(F("%s SUB YAM"), NAME);
-#endif
-        subToYamaha();
-        eb_fire(BusEvent::SUB_TO_YAMAHA);
-    } else {
-#if LOG && LOG_RE
-        log(F("%s SUB CAMB"), NAME);
-#endif
-        subToCambridge();
-        eb_fire(BusEvent::SUB_TO_CAMBRIDGE);
-    }
+void Relay::onSpeakerToCambridge() {
+    LOG_RE(F("%s SPK TO CAMBRIDGE"), NAME);
+    switchSpkToCambridge();
+    switchSubToCambridge();
 }
 
-inline void Relay::spkToYamaha() {
-    subCambridge = false;
+void Relay::onSubToYamaha() {
+    LOG_RE(F("%s SUB TO YAMAHA"), NAME);
+    switchSubToYamaha();
+}
+
+void Relay::onSubToCambridge() {
+    LOG_RE(F("%s SUB TO CAMBRIDGE"), NAME);
+    switchSubToCambridge();
+}
+
+inline void Relay::switchSpkToYamaha() {
     digitalWrite(RE_SPK_PIN, LOW);
+    speakerToCambridge = false;
 }
 
-inline void Relay::spkToCambridge() {
-    subCambridge = true;
+inline void Relay::switchSpkToCambridge() {
     digitalWrite(RE_SPK_PIN, HIGH);
+    speakerToCambridge = true;
 }
 
-inline void Relay::subToYamaha() {
-    subCambridge = false;
+inline void Relay::switchSubToYamaha() {
     digitalWrite(RE_SUB_PIN, LOW);
+    subToCambridge = false;
 }
 
-inline void Relay::subToCambridge() {
-    subCambridge = true;
+inline void Relay::switchSubToCambridge() {
     digitalWrite(RE_SUB_PIN, HIGH);
+    subToCambridge = true;
 }
 
 void Relay::setup() {
@@ -94,7 +86,19 @@ void Relay::setup() {
     pinMode(RE_SUB_PIN, OUTPUT);
     pinMode(RE_SPK_PIN, OUTPUT);
 
-    eb_reg(BusEvent::YAMAHA_TRIGGER_ON, &re_onYamahaTriggerOn);
-    eb_reg(BusEvent::YAMAHA_TRIGGER_OFF, &re_onYamahaTriggerOff);
-    eb_reg(BusEvent::IR_SUB_CMD, &re_onSubCmd);
+    eb_reg(BusEvent::SPK_TO_YAMAHA, &re_onSpeakerToYamaha);
+    eb_reg(BusEvent::SPK_TO_CAMBRIDGE, &re_onSpeakerToCambridge);
+    eb_reg(BusEvent::SUB_TO_YAMAHA, &re_onSubToYamaha);
+    eb_reg(BusEvent::SUB_TO_CAMBRIDGE, &re_onSubToCambridge);
+}
+
+void Relay::onCycle() {
+}
+
+bool Relay::isSpeakerToCambridge() const {
+    return speakerToCambridge;
+}
+
+bool Relay::isSubToCambridge() const {
+    return subToCambridge;
 }

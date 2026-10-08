@@ -18,20 +18,21 @@
 #ifndef MAIN_MENU_H
 #define MAIN_MENU_H
 
-#include "ArdLog.h"
 #include "Device.h"
-#include "EventBus.h"
 #include "SystemStateManager.h"
 #include "LcdDisplay.h"
 
 enum class MenuPos: uint8_t {
     FIRST = 0,
 
-    SPK_TO_CAM = FIRST,
-    SPK_TO_YAM = 1,
-    SPK_TO_IR = 2,
+    SPK_TO_CAM = 1,
+    SPK_TO_YAM = 2,
+    SUB_TO_CAM = 3,
+    SUB_TO_YAM = 4,
+    IR_LEARN = 5,
+    IR_SHOW_CODES = 6,
 
-    LAST = SPK_TO_IR
+    LAST = IR_SHOW_CODES
 };
 
 class MainMenu : public Device {
@@ -40,14 +41,12 @@ public:
 
     void onBtnMenu();
 
-    void onBtnOk();
-
-    void onBtnCancel();
+    void onBtnOk() const;
 
     void onSystemStateChange(SystemState state);
 
-    // from Device.h
-    void setup() override;
+    void setup() override; // from Device.h
+    void onCycle() override; // from Device.h
 
 private:
     static constexpr const char *NAME = "MM";

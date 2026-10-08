@@ -18,8 +18,12 @@
 
 static Display *dispRef;
 
-Display::Display(LcdDisplay *lcd, SystemStateManager *ssm) : speakerToCambridge(false), subToCambridge(false),
-                                                             infoDisplayMs(INFO_TRIGGER_OFF), lcd(lcd), ssm(ssm) {
+Display::Display(
+    LcdDisplay *lcd,
+    SystemStateManager *ssm,
+    Relay *relay) : infoDisplayMs(INFO_TRIGGER_OFF),
+                    lcd(lcd),
+                    ssm(ssm), relay(relay) {
 }
 
 static void disp_onSystemStateChanged(va_list ap) {
@@ -38,29 +42,8 @@ static void disp_onYamahaTriggerOff(va_list ap) {
     dispRef->onYamahaTriggerOff();
 }
 
-static void disp_onSubToYamaha(va_list ap) {
-    dispRef->onSubToYamaha();
-}
-
-static void disp_onSubToCambridge(va_list ap) {
-    dispRef->onSubToCambridge();
-}
-
-static void disp_onCycle(va_list ap) {
-    dispRef->onCycle();
-}
-
-void Display::onSubToYamaha() {
-    subToCambridge = false;
-}
-
-void Display::onSubToCambridge() {
-    subToCambridge = true;
-}
 
 void Display::onYamahaTriggerOn() {
-    speakerToCambridge = false;
-    subToCambridge = false;
     if (autoRefresh()) {
         lcd->printLine(0, "YAMAHA 12V TRIG.");
         lcd->printLine(1, "       ON");
@@ -69,8 +52,6 @@ void Display::onYamahaTriggerOn() {
 }
 
 void Display::onYamahaTriggerOff() {
-    speakerToCambridge = true;
-    subToCambridge = true;
     if (autoRefresh()) {
         lcd->printLine(0, "YAMAHA 12V TRIG.");
         lcd->printLine(1, "       OFF");
@@ -86,12 +67,8 @@ void Display::onRemoteInput() {
     }
 }
 
-bool Display::autoRefresh() const {
-    return ssm->get() == SystemState::IDLE;
-}
-
 void Display::onSystemStateChanged(SystemState state) {
-    if (state == SystemState::IDLE) {
+    if (state == SystemState::IDLE){
         resetInfoDisplay();
     }
 }
@@ -102,14 +79,14 @@ void Display::resetInfoDisplay() {
 
 void Display::printSpeakersAssigment() const {
     // row 0
-    if (speakerToCambridge) {
+    if (relay->isSpeakerToCambridge()) {
         lcd->printLine(0, "SPK: CAMBRIDGE");
     } else {
         lcd->printLine(0, "SPK: YAMAHA");
     }
 
     // row 1
-    if (subToCambridge) {
+    if (relay->isSubToCambridge()) {
         lcd->printLine(1, "SUB: CAMBRIDGE");
     } else {
         lcd->printLine(1, "SUB: YAMAHA");
@@ -123,12 +100,13 @@ void Display::onCycle() {
     }
 }
 
+bool Display::autoRefresh() const {
+    return ssm->get() == SystemState::IDLE;
+}
+
 void Display::setup() {
     dispRef = this;
 
-    eb_reg(BusEvent::SUB_TO_YAMAHA, &disp_onSubToYamaha);
-    eb_reg(BusEvent::SUB_TO_CAMBRIDGE, &disp_onSubToCambridge);
-    eb_reg(BusEvent::CYCLE, &disp_onCycle);
     eb_reg(BusEvent::SYSTEM_STATE_CHANGE, &disp_onSystemStateChanged);
     eb_reg(BusEvent::YAMAHA_TRIGGER_ON, &disp_onYamahaTriggerOn);
     eb_reg(BusEvent::YAMAHA_TRIGGER_OFF, &disp_onYamahaTriggerOff);

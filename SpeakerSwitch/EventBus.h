@@ -23,44 +23,49 @@
 /* To add new event: 1) Insert new enumeration into BusEvent 2) Increase #EVENTS_SIZE 3) Insert new enum into #BUS_LISTENERS */
 enum class BusEvent: uint8_t {
     // #### Values are indexed! ####
-    CYCLE = 0,
 
     /* 12V yamaha trigger is on. */
-    YAMAHA_TRIGGER_ON, // 1
+    YAMAHA_TRIGGER_ON = 0,
 
     /* 12V yamaha trigger is off. */
-    YAMAHA_TRIGGER_OFF, // 2
+    YAMAHA_TRIGGER_OFF = 1,
 
     /* Button MENU pressed. */
-    BTN_MENU, // 3
+    BTN_MENU = 2,
 
     /* Button OK pressed. */
-    BTN_OK, // 4
+    BTN_OK = 3,
 
     /* Button CANCEL pressed. */
-    BTN_CANCEL, // 5
+    BTN_CANCEL = 4,
 
     /* Any pressed. */
-    BTN_ANY, // 6
+    BTN_ANY = 5,
 
     /* IR command to flip SUB. */
-    IR_SUB_CMD, // 7
+    IR_SUB_CMD = 6,
 
     /* IR learn mode on for SUB. */
-    IR_SUB_LEARN, // 8
+    IR_SUB_LEARN = 7,
 
-    IR_SUB_LEARN_END, // 9
+    IR_SUB_SHOW_CODES = 8,
 
     /* Sub switched to Yamaha */
-    SUB_TO_YAMAHA, // 10
+    SUB_TO_YAMAHA = 9,
 
     /* Sub switched to Cambridge */
-    SUB_TO_CAMBRIDGE, // 11
+    SUB_TO_CAMBRIDGE = 10,
 
-    SYSTEM_STATE_CHANGE, // 12
+    /* Speakers and sub switched to Yamaha */
+    SPK_TO_YAMAHA = 11,
+
+    /* Speakers and sub switched to Cambridge */
+    SPK_TO_CAMBRIDGE = 12,
+
+    SYSTEM_STATE_CHANGE = 13,
 
     /* Number of elements in this enum. */
-    COUNT
+    COUNT = 14
 };
 
 void eb_fire(BusEvent event, ...);

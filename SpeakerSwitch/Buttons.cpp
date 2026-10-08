@@ -19,10 +19,6 @@
 
 static Buttons *refButtons;
 
-static void buttons_onCycle(va_list ap) {
-    refButtons->onCycle();
-}
-
 Buttons::Buttons()
     : processMs(0), repeatMs(0), lastButton(0) {
 }
@@ -33,7 +29,6 @@ void Buttons::setup() {
     setupButton(BT_PIN_CANCEL);
 
     refButtons = this;
-    eb_reg(BusEvent::CYCLE, &buttons_onCycle);
 }
 
 void Buttons::onCycle() {

@@ -25,6 +25,8 @@ public:
 
     /** Called only once after hard reset */
     virtual void setup() = 0;
+
+    virtual void onCycle();
 };
 
 #endif /* DEVICE_H_ */

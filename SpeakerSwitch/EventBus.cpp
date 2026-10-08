@@ -21,7 +21,7 @@ static constexpr const char *NAME = "EB";
 static constexpr uint8_t EVENTS_SIZE = static_cast<uint8_t>(BusEvent::COUNT);
 
 /** Max listeners pro event, not a total amount of the listeners. */
-static constexpr uint8_t EVENT_LISTENERS_MAX = 6;
+static constexpr uint8_t EVENT_LISTENERS_MAX = 4;
 
 static void (*BUS_LIST_FN[EVENTS_SIZE][EVENT_LISTENERS_MAX])(va_list);
 
@@ -50,9 +50,7 @@ void eb_fire(const BusEvent event, ...) {
     const uint8_t eventIdx = eb_getFnIdx(event);
     const uint8_t eventsSize = BUS_LIST_FN_SIZE[eventIdx];
 
-    if (event != BusEvent::CYCLE) {
-        log(F("%s EVENT %d->%d"), NAME, eventIdx, eventsSize);
-    }
+    LOG_EB(F("%s EVENT %d->%d"), NAME, eventIdx, eventsSize);
 
     for (uint8_t fnIdx = 0; fnIdx < eventsSize; fnIdx++) {
         BUS_LIST_FN[eventIdx][fnIdx](ap);

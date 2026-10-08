@@ -27,10 +27,9 @@ class Buttons : public Device {
 public:
     Buttons();
 
-    void onCycle();
+    void setup() override;  // from Device.h
 
-    // from Device.h
-    void setup() override;
+    void onCycle() override; // from Device.h
 
 private:
     static constexpr const char *NAME = "BT";

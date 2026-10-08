@@ -19,30 +19,76 @@
 
 static IrSubReceiver *irRef;
 
-IrSubReceiver::IrSubReceiver() : lastChangeMs(0), irSignal1(5689), irSignal2(7737), irLearnSignal1(0),
-                                 irLearnSignal2(0), learning(false) {
+IrSubReceiver::IrSubReceiver(LcdDisplay *lcd,
+                             SystemStateManager *ssm) : lcd(lcd),
+                                                        ssm(ssm),
+                                                        lastChangeMs(0),
+                                                        irSignal1(5689),
+                                                        irSignal2(7737),
+                                                        irLearnSignal1(0),
+                                                        irLearnSignal2(0),
+                                                        state(IrState::RECEIVING),
+                                                        subCambridge(false) {
+}
+
+static void ir_onSpeakerToYamaha(va_list ap) {
+    irRef->onSpeakerToYamaha();
+}
+
+static void ir_onSpeakerToCambridge(va_list ap) {
+    irRef->onSpeakerToCambridge();
+}
+
+static void ir_onSubToYamaha(va_list ap) {
+    irRef->onSubToYamaha();
+}
+
+static void ir_onSubToCambridge(va_list ap) {
+    irRef->onSubToCambridge();
 }
 
 static void ir_learn(va_list ap) {
     irRef->onLearn();
 }
 
-static void ir_onCycle(va_list ap) {
-    irRef->onCycle();
+static void ir_showCodes(va_list ap) {
+    irRef->onShowCodes();
 }
 
-static void ir_onSave(va_list ap) {
-    irRef->onSave();
+static void ir_onBtnOk(va_list ap) {
+    irRef->onBtnOk();
 }
 
 static void ir_onCancel(va_list ap) {
     irRef->onCancel();
 }
 
+void IrSubReceiver::onSpeakerToCambridge() {
+    subCambridge = true;
+}
+
+void IrSubReceiver::onSpeakerToYamaha() {
+    subCambridge = false;
+}
+
+void IrSubReceiver::onSubToCambridge() {
+    subCambridge = true;
+}
+
+void IrSubReceiver::onSubToYamaha() {
+    subCambridge = false;
+}
+
 void IrSubReceiver::onLearn() {
+    if (state != IrState::RECEIVING) {
+        return;
+    }
     irLearnSignal1 = 0;
     irLearnSignal2 = 0;
-    learning = true;
+    state = IrState::LEARNING;
+
+    lcd->printLine(0, "WAITING.....");
+    lcd->printLine(1, "WAITING.....");
 }
 
 void IrSubReceiver::learn() {
@@ -50,30 +96,83 @@ void IrSubReceiver::learn() {
 
     if (irLearnSignal1 == 0) {
         irLearnSignal1 = irin;
-        LOG_IR(F("%s S1:%d"), NAME, irin);
+        printIrCode(0, irin);
     } else if (irLearnSignal2 == 0 && irin != irLearnSignal1) {
         irLearnSignal2 = irin;
-        LOG_IR(F("%s S2:%d"), NAME, irin);
+        printIrCode(1, irin);
+        delay(SHOW_IR_LEARN2_MS);
     }
 
     if (irLearnSignal1 != 0 && irLearnSignal2 != 0) {
-        learning = false;
+        lcd->printLine(0, "IR LEARN SUCCESS");
+        lcd->printLine(1, "PRESS OK TO SAVE");
+        state = IrState::WAITING_FOR_SAVE;
     }
 }
 
-void IrSubReceiver::onCancel() {
-    irLearnSignal1 = 0;
-    irLearnSignal2 = 0;
-    learning = false;
+void IrSubReceiver::printIrCode(const uint8_t row, const uint32_t signal) const {
+    LOG_IR(F("%s S%d:%d"), NAME, row, signal);
+    char buf[17];
+    snprintf(buf, sizeof(buf), "IR CODE: 0x%lX", (unsigned long) signal);
+    lcd->printLine(row, buf);
 }
 
-void IrSubReceiver::onSave() {
+void IrSubReceiver::onCancel() {
+    if (state == IrState::SHOW_CODES) {
+        exitMenu();
+        return;
+    }
+
+    if (irLearnSignal1 != 0) {
+        irLearnSignal1 = 0;
+        irLearnSignal2 = 0;
+
+        lcd->printLine(0, "ABORTING....");
+        lcd->clear(1);
+    }
+
+    state = IrState::RECEIVING;
+    ssm->changeState(SystemState::IDLE);
+}
+
+void IrSubReceiver::exitMenu() {
+    state = IrState::RECEIVING;
+    lcd->printLine(0, "EXITING....");
+    lcd->clear(1);
+    ssm->changeState(SystemState::IDLE);
+}
+
+void IrSubReceiver::onBtnOk() {
+    if (state == IrState::SHOW_CODES) {
+        exitMenu();
+        return;
+    }
+    if (irLearnSignal1 == 0) {
+        return;
+    }
     irSignal1 = irLearnSignal1;
     irSignal2 = irLearnSignal2;
 
     irLearnSignal1 = 0;
     irLearnSignal2 = 0;
-    learning = false;
+
+    lcd->printLine(0, "SAVING....");
+    lcd->clear(1);
+
+    state = IrState::RECEIVING;
+    ssm->changeState(SystemState::IDLE);
+
+    // Save to EEPROM
+    uint32_t magic = EEPROM_MAGIC;
+    EEPROM.put(EEPROM_MAGIC_ADDR, magic);
+    EEPROM.put(EEPROM_IR_SIGNAL1_ADDR, irSignal1);
+    EEPROM.put(EEPROM_IR_SIGNAL2_ADDR, irSignal2);
+}
+
+void IrSubReceiver::onShowCodes() {
+    state = IrState::SHOW_CODES;
+    printIrCode(0, irSignal1);
+    printIrCode(1, irSignal2);
 }
 
 void IrSubReceiver::processIr() {
@@ -85,7 +184,11 @@ void IrSubReceiver::processIr() {
     uint32_t irin = IrReceiver.decodedIRData.decodedRawData;
     if (irin == irSignal1 || irin == irSignal2) {
         LOG_IR(F("%s CMD:%d"), NAME, irin);
+
         eb_fire(BusEvent::IR_SUB_CMD);
+
+        subCambridge = !subCambridge;
+        eb_fire(subCambridge ? BusEvent::SUB_TO_CAMBRIDGE : BusEvent::SUB_TO_YAMAHA);
     }
 }
 
@@ -94,7 +197,7 @@ void IrSubReceiver::onCycle() {
         return;
     }
 
-    if (learning) {
+    if (state == IrState::LEARNING) {
         learn();
     } else {
         processIr();
@@ -107,6 +210,21 @@ void IrSubReceiver::setup() {
     irRef = this;
     IrReceiver.begin(IR_RECEIVE_PIN, ENABLE_LED_FEEDBACK);
 
-    eb_reg(BusEvent::CYCLE, &ir_onCycle);
+    // Load IR signals from EEPROM if valid
+    uint32_t magic;
+    EEPROM.get(EEPROM_MAGIC_ADDR, magic);
+    if (magic == EEPROM_MAGIC) {
+        EEPROM.get(EEPROM_IR_SIGNAL1_ADDR, irSignal1);
+        EEPROM.get(EEPROM_IR_SIGNAL2_ADDR, irSignal2);
+        LOG_IR(F("%s Loaded IR codes: 0x%lX, 0x%lX"), NAME, (unsigned long)irSignal1, (unsigned long)irSignal2);
+    }
+
     eb_reg(BusEvent::IR_SUB_LEARN, &ir_learn);
+    eb_reg(BusEvent::IR_SUB_SHOW_CODES, &ir_showCodes);
+    eb_reg(BusEvent::SPK_TO_YAMAHA, &ir_onSpeakerToYamaha);
+    eb_reg(BusEvent::SPK_TO_CAMBRIDGE, &ir_onSpeakerToCambridge);
+    eb_reg(BusEvent::SUB_TO_YAMAHA, &ir_onSubToYamaha);
+    eb_reg(BusEvent::SUB_TO_CAMBRIDGE, &ir_onSubToCambridge);
+    eb_reg(BusEvent::BTN_OK, &ir_onBtnOk);
+    eb_reg(BusEvent::BTN_CANCEL, &ir_onCancel);
 }

@@ -34,14 +34,15 @@ public:
 
     SystemState get() const;
 
-    void onCycle();
+    bool isMenuActive() const;
 
     void onAnyButtonPress();
 
     void changeState(SystemState state);
 
-    // from Device.h
-    void setup() override;
+    void setup() override; // from Device.h
+
+    void onCycle() override; // from Device.h
 
 private:
     static constexpr const char *NAME = "SM";

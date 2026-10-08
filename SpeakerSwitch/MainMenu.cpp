@@ -19,10 +19,6 @@
 
 static MainMenu *refMen;
 
-static void mm_onBtnCancel(va_list ap) {
-    refMen->onBtnCancel();
-}
-
 static void mm_onSystemStateChange(va_list ap) {
     refMen->onSystemStateChange(va_arg(ap, SystemState));
 }
@@ -35,14 +31,11 @@ static void mm_onBtnOk(va_list ap) {
     refMen->onBtnOk();
 }
 
-MainMenu::MainMenu(SystemStateManager *sm, LcdDisplay *lcd) : sm(sm), lcd(lcd), pos(MenuPos::SPK_TO_CAM) {
+MainMenu::MainMenu(SystemStateManager *sm, LcdDisplay *lcd) : sm(sm), lcd(lcd), pos(MenuPos::FIRST) {
     refMen = this;
 }
 
-void MainMenu::onBtnCancel() {
-}
-
-void MainMenu::onSystemStateChange(SystemState state) {
+void MainMenu::onSystemStateChange(const SystemState state) {
     if (state == SystemState::IDLE) {
         resetMenu();
     }
@@ -53,41 +46,82 @@ void MainMenu::onBtnMenu() {
 
     sm->changeState(SystemState::MAIN_MENU);
 
-    switch (pos) {
-        case MenuPos::SPK_TO_CAM:
-            lcd->printLine(0, "SPEAKERS TO");
-            lcd->printLine(1, "CAMBRIDGE ?");
-            break;
-        case MenuPos::SPK_TO_YAM:
-            lcd->printLine(0, "SPEAKERS TO");
-            lcd->printLine(1, "YAMAHA ?");
-            break;
-        case MenuPos::SPK_TO_IR:
-            lcd->printLine(0, "IR");
-            lcd->printLine(1, "TODO ....");
-            break;
-    }
-
     // Move to next position, wrap to first when reaching end
     if (pos == MenuPos::LAST) {
         pos = MenuPos::FIRST;
-    } else {
-        pos = static_cast<MenuPos>(static_cast<uint8_t>(pos) + 1);
+    }
+    pos = static_cast<MenuPos>(static_cast<uint8_t>(pos) + 1);
+
+    switch (pos) {
+        case MenuPos::FIRST:
+            break;
+
+        case MenuPos::SPK_TO_CAM:
+            lcd->printLines("SPEAKERS TO", "CAMBRIDGE ?");
+            break;
+
+        case MenuPos::SPK_TO_YAM:
+            lcd->printLines("SPEAKERS TO", "YAMAHA ?");
+            break;
+
+        case MenuPos::SUB_TO_CAM:
+            lcd->printLines("SUB TO", "CAMBRIDGE ?");
+            break;
+
+        case MenuPos::SUB_TO_YAM:
+            lcd->printLines("SUB TO", "YAMAHA ?");
+            break;
+
+        case MenuPos::IR_LEARN:
+            lcd->printLines("LEARN IR CODE", "FOR SUB SWITCH");
+            break;
+
+        case MenuPos::IR_SHOW_CODES:
+            lcd->printLines("SHOW IR CODES", "FOR SUB SWITCH");
+            break;
     }
 }
 
-void MainMenu::onBtnOk() {
-    if (sm->get() == SystemState::MAIN_MENU) {
-        switch (pos) {
-            case MenuPos::SPK_TO_CAM:
-                lcd->printLine(0, "SPEAKERS TO");
-                lcd->printLine(1, "CAMBRIDGE ?");
-                break;
-            case MenuPos::SPK_TO_YAM:
-                lcd->printLine(0, "SPEAKERS TO");
-                lcd->printLine(1, "YAMAHA ?");
-                break;
-        }
+void MainMenu::onBtnOk() const {
+    if (!sm->isMenuActive()) {
+        return;
+    }
+
+    switch (pos) {
+        case MenuPos::FIRST:
+            break;
+
+        case MenuPos::SPK_TO_CAM:
+            lcd->printLines("SWITCHING SPK TO", "CAMBRIDGE");
+            eb_fire(BusEvent::SPK_TO_CAMBRIDGE);
+            sm->changeState(SystemState::IDLE);
+            break;
+
+        case MenuPos::SPK_TO_YAM:
+            lcd->printLines("SWITCHING SPK TO", "YAMAHA");
+            eb_fire(BusEvent::SPK_TO_YAMAHA);
+            sm->changeState(SystemState::IDLE);
+            break;
+
+        case MenuPos::SUB_TO_CAM:
+            lcd->printLines("SWITCHING SUB TO", "CAMBRIDGE");
+            eb_fire(BusEvent::SUB_TO_CAMBRIDGE);
+            sm->changeState(SystemState::IDLE);
+            break;
+
+        case MenuPos::SUB_TO_YAM:
+            lcd->printLines("SWITCHING SUB TO", "YAMAHA");
+            eb_fire(BusEvent::SUB_TO_YAMAHA);
+            sm->changeState(SystemState::IDLE);
+            break;
+
+        case MenuPos::IR_LEARN:
+            eb_fire(BusEvent::IR_SUB_LEARN);
+            break;
+
+        case MenuPos::IR_SHOW_CODES:
+            eb_fire(BusEvent::IR_SUB_SHOW_CODES);
+            break;
     }
 }
 
@@ -95,8 +129,10 @@ void MainMenu::resetMenu() {
     pos = MenuPos::FIRST;
 }
 
+void MainMenu::onCycle() {
+}
+
 void MainMenu::setup() {
-    eb_reg(BusEvent::BTN_CANCEL, &mm_onBtnCancel);
     eb_reg(BusEvent::BTN_MENU, &mm_onBtnMenu);
     eb_reg(BusEvent::BTN_OK, &mm_onBtnOk);
     eb_reg(BusEvent::SYSTEM_STATE_CHANGE, &mm_onSystemStateChange);

@@ -22,10 +22,6 @@ static YamahaTrigger *refAt;
 YamahaTrigger::YamahaTrigger() : lastChangeMs(0), currentTriggerLevel(255) {
 }
 
-static void at_onCycle(va_list ap) {
-    refAt->onCycle();
-}
-
 void YamahaTrigger::onCycle() {
     const uint8_t triggerLevel = digitalRead(YT_TRIG_PIN);
 
@@ -46,22 +42,33 @@ void YamahaTrigger::onCycle() {
     currentTriggerLevel = triggerLevel;
     lastChangeMs = 0;
 
-    sendEvent(triggerLevel);
+    LOG_YT(F("%s AMP %d"), NAME, triggerLevel);
+    sendTriggerEvent(triggerLevel);
+    sendSpeakerEvent(triggerLevel);
 }
 
-void inline YamahaTrigger::sendEvent(const uint8_t triggerLevel) {
-    LOG_YT(F("%s AMP %d"), NAME, triggerLevel);
-    eb_fire(triggerLevel == HIGH ? BusEvent::YAMAHA_TRIGGER_ON : BusEvent::YAMAHA_TRIGGER_OFF);
+void inline YamahaTrigger::sendTriggerEvent(const uint8_t triggerLevel) {
+    if (triggerLevel == HIGH) {
+        eb_fire(BusEvent::YAMAHA_TRIGGER_ON);
+    } else {
+        eb_fire(BusEvent::YAMAHA_TRIGGER_OFF);
+    }
+}
+
+void inline YamahaTrigger::sendSpeakerEvent(const uint8_t triggerLevel) {
+    if (triggerLevel == HIGH) {
+        eb_fire(BusEvent::SPK_TO_YAMAHA);
+    } else {
+        eb_fire(BusEvent::SPK_TO_CAMBRIDGE);
+    }
 }
 
 void YamahaTrigger::reinitialize() {
     const uint8_t triggerLevel = currentTriggerLevel = digitalRead(YT_TRIG_PIN);
-    sendEvent(triggerLevel);
+    sendSpeakerEvent(triggerLevel);
 }
 
 void YamahaTrigger::setup() {
     pinMode(YT_TRIG_PIN, INPUT);
     refAt = this;
-
-    eb_reg(BusEvent::CYCLE, &at_onCycle);
 }

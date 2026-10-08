@@ -29,16 +29,14 @@
 static SystemStateManager *ssm = new SystemStateManager();
 static Buttons *btn = new Buttons();
 static Relay *re = new Relay();
-static IrSubReceiver *irs = new IrSubReceiver();
 static LcdDisplay *lcd = new LcdDisplay();
+static IrSubReceiver *irs = new IrSubReceiver(lcd, ssm);
 static YamahaTrigger *yt = new YamahaTrigger();
-static Display *disp = new Display(lcd, ssm);
+static Display *disp = new Display(lcd, ssm, re);
 static MainMenu *mm = new MainMenu(ssm, lcd);
 
 static constexpr uint8_t DEVICES = 8;
 static Device *dev[DEVICES] = {btn, re, irs, lcd, yt, disp, ssm, mm};
-
-static void execSetup();
 
 void setup() {
 #if LOG
@@ -48,22 +46,20 @@ void setup() {
     LOG_SW(F("\n\n### SETUP ###"));
 
     util_cycle();
-    execSetup();
+
+    for (uint8_t i = 0; i < DEVICES; i++) {
+        dev[i]->setup();
+    }
 
     yt->reinitialize();
 }
 
 void loop() {
-    // #if LOG && LOG_SW
-    //  log(F("### LOOP ###"));
-    // #endif
-
+    // LOG_SW(F("\n\n### LOOP ###"));
     util_cycle();
-    eb_fire(BusEvent::CYCLE);
-}
 
-void execSetup() {
     for (uint8_t i = 0; i < DEVICES; i++) {
-        dev[i]->setup();
+        dev[i]->onCycle();
     }
 }
+

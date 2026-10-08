@@ -37,6 +37,11 @@ void LcdDisplay::clear(uint8_t row) {
     lcd.setCursor(0, row);
 }
 
+void LcdDisplay::printLines(const char *line1, const char *line2) {
+    printLine(0, line1);
+    printLine(1, line2);
+}
+
 // https://docs.arduino.cc/learn/electronics/lcd-displays/
 void LcdDisplay::setup() {
     lcdRef = this;
@@ -46,4 +51,10 @@ void LcdDisplay::setup() {
 
     lcd.begin(16, 2);
     lcd.noAutoscroll();
-};
+}
+
+void LcdDisplay::onCycle() {
+
+}
+
+

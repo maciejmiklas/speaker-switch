@@ -23,16 +23,13 @@
 #include "Util.h"
 #include "LcdDisplay.h"
 #include "SystemStateManager.h"
+#include "Relay.h"
+
 
 class Display : public Device {
 public:
-    Display(LcdDisplay *lcd, SystemStateManager *ssm);
+    Display(LcdDisplay *lcd, SystemStateManager *ssm, Relay *relay);
 
-    void onCycle();
-
-    void onSubToYamaha();
-
-    void onSubToCambridge();
 
     void onYamahaTriggerOn();
 
@@ -42,18 +39,18 @@ public:
 
     void onSystemStateChanged(SystemState state);
 
-    // from Device.h
-    void setup() override;
+    void setup() override; // from Device.h
+
+    void onCycle() override; // from Device.h
 
 private:
     static constexpr const char *NAME = "DS";
     static constexpr uint16_t INFO_TRIGGER_OFF = 0;
 
-    bool speakerToCambridge;
-    bool subToCambridge;
     uint32_t infoDisplayMs;
     LcdDisplay *lcd;
     SystemStateManager *ssm;
+    Relay *relay;
 
     void printSpeakersAssigment() const;
 

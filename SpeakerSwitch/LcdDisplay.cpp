@@ -17,21 +17,17 @@
  */
 #include "LcdDisplay.h"
 
+// https://docs.arduino.cc/learn/electronics/lcd-displays/
 static LiquidCrystal lcd(LC_LCD_RS, LC_LCD_E, LC_LCD_D4, LC_LCD_D5, LC_LCD_D6, LC_LCD_D7);
 
-static LcdDisplay *lcdRef;
-
-LcdDisplay::LcdDisplay() {
-}
-
-static void lcd_onBrightnessUp(va_list ap) {
-    lcdRef->onBrightnessUp();
+LcdDisplay::LcdDisplay() : brightness(BRIGHTNESS_DEFAULT), pwmCounter(0) {
 }
 
 void LcdDisplay::printLine(const uint8_t row, const char *fmt) {
-    lcd.setCursor(0, row);
     char buf[17]; // 16 chars + null terminator
     snprintf(buf, sizeof(buf), "%-16s", fmt);
+
+    lcd.setCursor(0, row);
     lcd.print(buf);
 }
 
@@ -41,30 +37,62 @@ void LcdDisplay::clear(uint8_t row) {
     lcd.setCursor(0, row);
 }
 
+void LcdDisplay::printAborting() {
+    printLine(0, "ABORTING....");
+    clear(1);
+}
+
+void LcdDisplay::printSaving() {
+    printLine(0, "SAVING....");
+    clear(1);
+}
+
+void LcdDisplay::printClosing() {
+    printLine(0, "CLOSING....");
+    clear(1);
+}
+
 void LcdDisplay::printLines(const char *line1, const char *line2) {
     printLine(0, line1);
     printLine(1, line2);
 }
 
 void LcdDisplay::onBrightnessUp() {
+    printLine(0, "BRIGHTNESS");
+    brightness++;
+    if (brightness > BRIGHTNESS_MAX) {
+        brightness = BRIGHTNESS_MIN;
+    }
 
+    // Build progress bar: filled chars for brightness level, empty for rest
+    char bar[17]; // 16 chars + null terminator
+    for (uint8_t i = 0; i < 16; i++) {
+        bar[i] = (i < brightness) ? '\xFF' : ' '; // 0xFF is full block character
+    }
+    bar[16] = '\0';
+    printLine(1, bar);
 }
 
-// https://docs.arduino.cc/learn/electronics/lcd-displays/
 void LcdDisplay::setup() {
-    lcdRef = this;
-
     pinMode(LC_LCD_K, OUTPUT);
     digitalWrite(LC_LCD_K, HIGH);
 
     lcd.begin(16, 2);
     lcd.noAutoscroll();
 
-    eb_reg(BusEvent::LCD_BRIGHTNESS_UP, &lcd_onBrightnessUp);
+    EB_REG(BusEvent::LCD_BRIGHTNESS_UP, this, onBrightnessUp);
 }
 
 void LcdDisplay::onCycle() {
+    // Software PWM for backlight - called frequently from main loop
+    pwmCounter++;
+    if (pwmCounter >= BRIGHTNESS_MAX) {
+        pwmCounter = BRIGHTNESS_MIN;
+    }
 
+    if (pwmCounter < brightness) {
+        digitalWrite(LC_LCD_K, HIGH);
+    } else {
+        digitalWrite(LC_LCD_K, LOW);
+    }
 }
-
-

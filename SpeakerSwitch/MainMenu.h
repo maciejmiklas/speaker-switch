@@ -44,6 +44,8 @@ public:
 
     void onBtnOk() const;
 
+    void onBtnCancel() const;
+
     void onSystemStateChange(SystemState state);
 
     void setup() override; // from Device.h

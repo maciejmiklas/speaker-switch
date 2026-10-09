@@ -25,11 +25,21 @@
 
 class LcdDisplay : public Device {
 public:
+    static constexpr uint8_t BRIGHTNESS_MIN = 1;
+    static constexpr uint8_t BRIGHTNESS_MAX = 16;
+    static constexpr uint8_t BRIGHTNESS_DEFAULT = 8;
+
     LcdDisplay();
 
     void onBrightnessUp();
 
     void clear(uint8_t row);
+
+    void printAborting();
+
+    void printClosing();
+
+    void printSaving();
 
     void printLine(uint8_t row, const char *fmt);
 
@@ -39,8 +49,13 @@ public:
 
     void onCycle() override; // from Device.h
 
+    uint8_t getBrightness() const { return brightness; }
+
 private:
     static constexpr const char *NAME = "LC";
+
+    uint8_t brightness;
+    uint8_t pwmCounter;
 };
 
 #endif  // LCD_DISPLAY_H

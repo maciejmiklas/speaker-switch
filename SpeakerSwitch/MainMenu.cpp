@@ -17,22 +17,7 @@
 
 #include "MainMenu.h"
 
-static MainMenu *refMen;
-
-static void mm_onSystemStateChange(va_list ap) {
-    refMen->onSystemStateChange(va_arg(ap, SystemState));
-}
-
-static void mm_onBtnMenu(va_list ap) {
-    refMen->onBtnMenu();
-}
-
-static void mm_onBtnOk(va_list ap) {
-    refMen->onBtnOk();
-}
-
 MainMenu::MainMenu(SystemStateManager *sm, LcdDisplay *lcd) : sm(sm), lcd(lcd), pos(MenuPos::FIRST) {
-    refMen = this;
 }
 
 void MainMenu::onSystemStateChange(const SystemState state) {
@@ -133,6 +118,13 @@ void MainMenu::onBtnOk() const {
     }
 }
 
+void MainMenu::onBtnCancel() const {
+    if (pos == MenuPos::LCD_BRIGHTNESS) {
+        lcd->printClosing();
+        sm->changeState(SystemState::IDLE);
+    }
+}
+
 void MainMenu::resetMenu() {
     pos = MenuPos::FIRST;
 }
@@ -141,7 +133,8 @@ void MainMenu::onCycle() {
 }
 
 void MainMenu::setup() {
-    eb_reg(BusEvent::BTN_MENU, &mm_onBtnMenu);
-    eb_reg(BusEvent::BTN_OK, &mm_onBtnOk);
-    eb_reg(BusEvent::SYSTEM_STATE_CHANGE, &mm_onSystemStateChange);
+    EB_REG(BusEvent::BTN_MENU, this, onBtnMenu);
+    EB_REG(BusEvent::BTN_OK, this, onBtnOk);
+    EB_REG(BusEvent::BTN_CANCEL, this, onBtnCancel);
+    EB_REG_ARG(BusEvent::SYSTEM_STATE_CHANGE, this, onSystemStateChange, SystemState);
 }

@@ -37,7 +37,7 @@ static constexpr uint8_t DIO_10 = 10; // [PIN:14, PB2] LC_LCD_RS
 static constexpr uint8_t DIO_11 = 11; // [PIN:15, PB3] LC_LCD_E
 
 // ######## ANALOG PINs ########
-static constexpr uint8_t AIO_0 = A0; // LCD BRIGHTNESS
+static constexpr uint8_t AIO_0 = A0;
 static constexpr uint8_t AIO_1 = A1; // BT_PIN_OK
 static constexpr uint8_t AIO_2 = A2; // BT_PIN_CANCEL
 static constexpr uint8_t AIO_3 = A3; // BT_PIN_MENU
@@ -84,7 +84,6 @@ static constexpr uint8_t LC_LCD_D4 = DIO_5;
 static constexpr uint8_t LC_LCD_D5 = DIO_4;
 static constexpr uint8_t LC_LCD_D6 = DIO_3;
 static constexpr uint8_t LC_LCD_D7 = DIO_2;
-
 static constexpr uint8_t LC_LCD_K = DIO_7;
 
 // ######## Display(DS) ########

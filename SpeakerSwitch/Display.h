@@ -30,7 +30,6 @@ class Display : public Device {
 public:
     Display(LcdDisplay *lcd, SystemStateManager *ssm, Relay *relay);
 
-
     void onYamahaTriggerOn();
 
     void onYamahaTriggerOff();

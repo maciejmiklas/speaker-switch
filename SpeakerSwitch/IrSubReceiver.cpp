@@ -17,8 +17,6 @@
 #include "IrSubReceiver.h"
 #include <IRremote.hpp>
 
-static IrSubReceiver *irRef;
-
 IrSubReceiver::IrSubReceiver(LcdDisplay *lcd,
                              SystemStateManager *ssm) : lcd(lcd),
                                                         ssm(ssm),
@@ -29,38 +27,6 @@ IrSubReceiver::IrSubReceiver(LcdDisplay *lcd,
                                                         irLearnSignal2(0),
                                                         state(IrState::RECEIVING),
                                                         subCambridge(false) {
-}
-
-static void ir_onSpeakerToYamaha(va_list ap) {
-    irRef->onSpeakerToYamaha();
-}
-
-static void ir_onSpeakerToCambridge(va_list ap) {
-    irRef->onSpeakerToCambridge();
-}
-
-static void ir_onSubToYamaha(va_list ap) {
-    irRef->onSubToYamaha();
-}
-
-static void ir_onSubToCambridge(va_list ap) {
-    irRef->onSubToCambridge();
-}
-
-static void ir_learn(va_list ap) {
-    irRef->onLearn();
-}
-
-static void ir_showCodes(va_list ap) {
-    irRef->onShowCodes();
-}
-
-static void ir_onBtnOk(va_list ap) {
-    irRef->onBtnOk();
-}
-
-static void ir_onCancel(va_list ap) {
-    irRef->onCancel();
 }
 
 void IrSubReceiver::onSpeakerToCambridge() {
@@ -118,33 +84,34 @@ void IrSubReceiver::printIrCode(const uint8_t row, const uint32_t signal) const 
 }
 
 void IrSubReceiver::onCancel() {
-    if (state == IrState::SHOW_CODES) {
-        exitMenu();
+    if (state == IrState::RECEIVING) {
         return;
     }
 
     if (irLearnSignal1 != 0) {
         irLearnSignal1 = 0;
         irLearnSignal2 = 0;
-
-        lcd->printLine(0, "ABORTING....");
-        lcd->clear(1);
+        lcd->printAborting();
+    } else {
+        lcd->printClosing();
     }
 
-    state = IrState::RECEIVING;
-    ssm->changeState(SystemState::IDLE);
+    exitMenu();
 }
 
 void IrSubReceiver::exitMenu() {
     state = IrState::RECEIVING;
-    lcd->printLine(0, "EXITING....");
-    lcd->clear(1);
     ssm->changeState(SystemState::IDLE);
 }
 
 void IrSubReceiver::onBtnOk() {
+    if (state == IrState::RECEIVING) {
+        return;
+    }
+
     if (state == IrState::SHOW_CODES) {
         exitMenu();
+        lcd->printClosing();
         return;
     }
     if (irLearnSignal1 == 0) {
@@ -156,8 +123,7 @@ void IrSubReceiver::onBtnOk() {
     irLearnSignal1 = 0;
     irLearnSignal2 = 0;
 
-    lcd->printLine(0, "SAVING....");
-    lcd->clear(1);
+    lcd->printSaving();
 
     state = IrState::RECEIVING;
     ssm->changeState(SystemState::IDLE);
@@ -203,7 +169,6 @@ void IrSubReceiver::onCycle() {
 }
 
 void IrSubReceiver::setup() {
-    irRef = this;
     IrReceiver.begin(IR_RECEIVE_PIN, ENABLE_LED_FEEDBACK);
 
     // Load IR signals from EEPROM if valid
@@ -211,12 +176,12 @@ void IrSubReceiver::setup() {
         LOG_IR(F("%s Loaded IR codes: 0x%lX, 0x%lX"), NAME, (unsigned long)irSignal1, (unsigned long)irSignal2);
     }
 
-    eb_reg(BusEvent::IR_SUB_LEARN, &ir_learn);
-    eb_reg(BusEvent::IR_SUB_SHOW_CODES, &ir_showCodes);
-    eb_reg(BusEvent::SPK_TO_YAMAHA, &ir_onSpeakerToYamaha);
-    eb_reg(BusEvent::SPK_TO_CAMBRIDGE, &ir_onSpeakerToCambridge);
-    eb_reg(BusEvent::SUB_TO_YAMAHA, &ir_onSubToYamaha);
-    eb_reg(BusEvent::SUB_TO_CAMBRIDGE, &ir_onSubToCambridge);
-    eb_reg(BusEvent::BTN_OK, &ir_onBtnOk);
-    eb_reg(BusEvent::BTN_CANCEL, &ir_onCancel);
+    EB_REG(BusEvent::IR_SUB_LEARN, this, learn);
+    EB_REG(BusEvent::IR_SUB_SHOW_CODES, this, onShowCodes);
+    EB_REG(BusEvent::SPK_TO_YAMAHA, this, onSpeakerToYamaha);
+    EB_REG(BusEvent::SPK_TO_CAMBRIDGE, this, onSpeakerToCambridge);
+    EB_REG(BusEvent::SUB_TO_YAMAHA, this, onSubToYamaha);
+    EB_REG(BusEvent::SUB_TO_CAMBRIDGE, this, onSubToCambridge);
+    EB_REG(BusEvent::BTN_OK, this, onBtnOk);
+    EB_REG(BusEvent::BTN_CANCEL, this, onCancel);
 }

@@ -17,25 +17,7 @@
  */
 #include "Relay.h"
 
-static Relay *relayRef;
-
 Relay::Relay() : speakerToCambridge(false), subToCambridge(false) {
-}
-
-static void re_onSpeakerToYamaha(va_list ap) {
-    relayRef->onSpeakerToYamaha();
-}
-
-static void re_onSpeakerToCambridge(va_list ap) {
-    relayRef->onSpeakerToCambridge();
-}
-
-static void re_onSubToYamaha(va_list ap) {
-    relayRef->onSubToYamaha();
-}
-
-static void re_onSubToCambridge(va_list ap) {
-    relayRef->onSubToCambridge();
 }
 
 void Relay::onSpeakerToYamaha() {
@@ -81,15 +63,14 @@ inline void Relay::switchSubToCambridge() {
 }
 
 void Relay::setup() {
-    relayRef = this;
 
     pinMode(RE_SUB_PIN, OUTPUT);
     pinMode(RE_SPK_PIN, OUTPUT);
 
-    eb_reg(BusEvent::SPK_TO_YAMAHA, &re_onSpeakerToYamaha);
-    eb_reg(BusEvent::SPK_TO_CAMBRIDGE, &re_onSpeakerToCambridge);
-    eb_reg(BusEvent::SUB_TO_YAMAHA, &re_onSubToYamaha);
-    eb_reg(BusEvent::SUB_TO_CAMBRIDGE, &re_onSubToCambridge);
+    EB_REG(BusEvent::SPK_TO_YAMAHA, this, onSpeakerToYamaha);
+    EB_REG(BusEvent::SPK_TO_CAMBRIDGE, this, onSpeakerToCambridge);
+    EB_REG(BusEvent::SUB_TO_YAMAHA, this, onSubToYamaha);
+    EB_REG(BusEvent::SUB_TO_CAMBRIDGE, this, onSubToCambridge);
 }
 
 void Relay::onCycle() {

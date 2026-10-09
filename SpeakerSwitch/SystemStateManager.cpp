@@ -18,19 +18,11 @@
 
 #include "Util.h"
 
-static SystemStateManager *refSm;
-
-static void sm_onAnyButtonPress(va_list ap) {
-    refSm->onAnyButtonPress();
-}
-
-
 void SystemStateManager::onAnyButtonPress() {
     lastStateChange = util_ms();
 }
 
 SystemStateManager::SystemStateManager() : state(SystemState::IDLE), lastStateChange(0) {
-    refSm = this;
 }
 
 SystemState SystemStateManager::get() const {
@@ -59,5 +51,5 @@ void SystemStateManager::changeState(const SystemState state) {
 }
 
 void SystemStateManager::setup() {
-    eb_reg(BusEvent::BTN_ANY, &sm_onAnyButtonPress);
+    EB_REG(BusEvent::BTN_ANY, this, onAnyButtonPress);
 }

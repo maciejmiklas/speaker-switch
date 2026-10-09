@@ -72,6 +72,18 @@ enum class BusEvent: uint8_t {
 
 void eb_fire(BusEvent event, ...);
 
-void eb_reg(BusEvent event, void (*func)(va_list));
+void eb_reg(BusEvent event, void (*func)(void* ctx, va_list), void* ctx);
+
+// Simpler version for methods that don't need va_list args
+#define EB_REG(event, instance, method) \
+    eb_reg(event, [](void* ctx, va_list) { \
+        static_cast<decltype(instance)>(ctx)->method(); \
+    }, instance)
+
+// Version for methods that take a single typed argument from the event
+#define EB_REG_ARG(event, instance, method, argType) \
+    eb_reg(event, [](void* ctx, va_list ap) { \
+        static_cast<decltype(instance)>(ctx)->method(va_arg(ap, argType)); \
+    }, instance)
 
 #endif /* EVENTBUS_H_ */

@@ -14,8 +14,8 @@ add_executable(SpeakerSwitch
         Relay.cpp
         Util.cpp
         YamahaTrigger.cpp
-        SystemStatemanager.cpp
-        MainMenu.cpp,
+        SystemStateManager.cpp
+        MainMenu.cpp
         Storage.cpp
 )
 

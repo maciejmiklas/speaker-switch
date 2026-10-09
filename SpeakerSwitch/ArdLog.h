@@ -21,7 +21,7 @@
 #include <stdarg.h>
 
 /** Enables logger so that it can log over serial port. */
-#define LOG true
+#define LOG false
 
 /** Enable logger for: SpeakerSwitch */
 #define LOG_SW_ON true

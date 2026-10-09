@@ -16,8 +16,6 @@
  */
 #include "Display.h"
 
-static Display *dispRef;
-
 Display::Display(
     LcdDisplay *lcd,
     SystemStateManager *ssm,
@@ -25,23 +23,6 @@ Display::Display(
                     lcd(lcd),
                     ssm(ssm), relay(relay) {
 }
-
-static void disp_onSystemStateChanged(va_list ap) {
-    dispRef->onSystemStateChanged(va_arg(ap, SystemState));
-}
-
-static void disp_onRemoteInput(va_list ap) {
-    dispRef->onRemoteInput();
-}
-
-static void disp_onYamahaTriggerOn(va_list ap) {
-    dispRef->onYamahaTriggerOn();
-}
-
-static void disp_onYamahaTriggerOff(va_list ap) {
-    dispRef->onYamahaTriggerOff();
-}
-
 
 void Display::onYamahaTriggerOn() {
     if (autoRefresh()) {
@@ -67,7 +48,7 @@ void Display::onRemoteInput() {
     }
 }
 
-void Display::onSystemStateChanged(SystemState state) {
+void Display::onSystemStateChanged(const SystemState state) {
     if (state == SystemState::IDLE){
         resetInfoDisplay();
     }
@@ -105,12 +86,10 @@ bool Display::autoRefresh() const {
 }
 
 void Display::setup() {
-    dispRef = this;
-
-    eb_reg(BusEvent::SYSTEM_STATE_CHANGE, &disp_onSystemStateChanged);
-    eb_reg(BusEvent::YAMAHA_TRIGGER_ON, &disp_onYamahaTriggerOn);
-    eb_reg(BusEvent::YAMAHA_TRIGGER_OFF, &disp_onYamahaTriggerOff);
-    eb_reg(BusEvent::IR_SUB_CMD, &disp_onRemoteInput);
+    EB_REG_ARG(BusEvent::SYSTEM_STATE_CHANGE, this, onSystemStateChanged,SystemState);
+    EB_REG(BusEvent::YAMAHA_TRIGGER_ON, this, onYamahaTriggerOn);
+    EB_REG(BusEvent::YAMAHA_TRIGGER_OFF, this, onYamahaTriggerOff);
+    EB_REG(BusEvent::IR_SUB_CMD, this, onRemoteInput);
 
     lcd->printLine(0, APP_NAME);
     lcd->printLine(1, VERSION);
